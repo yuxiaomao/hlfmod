@@ -1,0 +1,81 @@
+#define HL_NAME(n) fmod_##n
+
+#include <hl.h>
+#include <fmod_studio.h>
+#include <fmod_errors.h>
+
+#define CHKERR(__ret, __default) { if( __ret != FMOD_OK ) { ReportFmodError(__ret,__LINE__); return __default; } }
+
+IMPORT void hl_sys_print( vbyte *msg );
+static void ReportFmodError( FMOD_RESULT err, int line ) {
+	static char tmp[256];
+	snprintf(tmp, 256, "FMOD error: %s line %d", FMOD_ErrorString(err), line);
+	hl_sys_print((vbyte*)hl_to_utf16(tmp));
+}
+
+HL_PRIM FMOD_STUDIO_SYSTEM *HL_NAME(studio_system_create)() {
+	FMOD_STUDIO_SYSTEM *system;
+	FMOD_RESULT res = FMOD_Studio_System_Create(&system, FMOD_VERSION);
+	CHKERR(res, NULL);
+	return system;
+}
+
+HL_PRIM bool HL_NAME(studio_system_release)(FMOD_STUDIO_SYSTEM *system) {
+	FMOD_RESULT res = FMOD_Studio_System_Release(system);
+	CHKERR(res, false);
+	return true;
+}
+
+HL_PRIM FMOD_SYSTEM *HL_NAME(studio_system_get_core_system)(FMOD_STUDIO_SYSTEM *system) {
+	FMOD_SYSTEM *core;
+	FMOD_RESULT res = FMOD_Studio_System_GetCoreSystem(system, &core);
+	CHKERR(res, NULL);
+	return core;
+}
+
+HL_PRIM bool HL_NAME(studio_system_initialize)(FMOD_STUDIO_SYSTEM *system, int maxchannels, int studioflags, int coreflags, void *extradriverdata) {
+	FMOD_RESULT res = FMOD_Studio_System_Initialize(system, maxchannels, studioflags, coreflags, extradriverdata);
+	CHKERR(res, false);
+	return true;
+}
+
+HL_PRIM bool HL_NAME(studio_system_update)(FMOD_STUDIO_SYSTEM *system) {
+	FMOD_RESULT res = FMOD_Studio_System_Update(system);
+	CHKERR(res, false);
+	return true;
+}
+
+HL_PRIM FMOD_STUDIO_BANK *HL_NAME(studio_system_load_bank_file)(FMOD_STUDIO_SYSTEM *system, const char *filename, int flags) {
+	FMOD_STUDIO_BANK *bank;
+	FMOD_RESULT res = FMOD_Studio_System_LoadBankFile(system, filename, flags, &bank);
+	CHKERR(res, NULL);
+	return bank;
+}
+
+HL_PRIM FMOD_STUDIO_EVENTDESCRIPTION *HL_NAME(studio_system_get_event)(FMOD_STUDIO_SYSTEM *system, const char *pathOrId) {
+	FMOD_STUDIO_EVENTDESCRIPTION *event;
+	FMOD_RESULT res = FMOD_Studio_System_GetEvent(system, pathOrId, &event);
+	CHKERR(res, NULL);
+	return event;
+}
+
+#define _FSSYSTEM _ABSTRACT(FMOD_STUDIO_SYSTEM)
+#define _FSYSTEM _ABSTRACT(FMOD_SYSTEM)
+#define _FSBANK _ABSTRACT(FMOD_STUDIO_BANK)
+#define _FSEVENTDESCRIPTION _ABSTRACT(FMOD_STUDIO_EVENTDESCRIPTION)
+DEFINE_PRIM(_FSSYSTEM, studio_system_create, _NO_ARG);
+DEFINE_PRIM(_BOOL, studio_system_release, _FSSYSTEM);
+DEFINE_PRIM(_FSYSTEM, studio_system_get_core_system, _FSSYSTEM);
+DEFINE_PRIM(_BOOL, studio_system_initialize, _FSSYSTEM _I32 _I32 _I32 _DYN);
+DEFINE_PRIM(_BOOL, studio_system_update, _FSSYSTEM);
+DEFINE_PRIM(_FSBANK, studio_system_load_bank_file, _FSSYSTEM _BYTES _I32);
+DEFINE_PRIM(_FSEVENTDESCRIPTION, studio_system_get_event, _FSSYSTEM _BYTES);
+
+
+HL_PRIM bool HL_NAME(studio_bank_unload)(FMOD_STUDIO_BANK *bank) {
+	FMOD_RESULT res = FMOD_Studio_Bank_Unload(bank);
+	CHKERR(res, false);
+	return true;
+}
+
+DEFINE_PRIM(_BOOL, studio_bank_unload, _FSBANK);
