@@ -1,0 +1,7 @@
+api
+.vs
+*.user
+x64
+*.hl
+*.o
+*.hdll
