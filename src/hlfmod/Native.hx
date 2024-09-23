@@ -37,6 +37,19 @@ enum abstract LoadBankFlags(Int) {
 	@:op(a | b) static function or(a:LoadBankFlags, b:LoadBankFlags) : LoadBankFlags;
 }
 
+@:struct class FVector {
+	var x : Single;
+	var y : Single;
+	var z : Single;
+}
+
+@:struct class F3DAttributes {
+	@:packed var position : FVector;
+	@:packed var velocity : FVector;
+	@:packed var forward : FVector;
+	@:packed var up : FVector;
+}
+
 #if !disable_sound
 @:hlNative("hlfmod", "studio_system_")
 #end
@@ -50,6 +63,7 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	public function getEvent(pathOrId : hl.Bytes) : EventDescription { return null; }
 	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
+	public function setListenerAttributes(index : Int, attributes : F3DAttributes, attenuationposition : FVector) : Bool { return false; }
 	public function loadBankFile(filename : hl.Bytes, flags : LoadBankFlags) : Bank { return null; }
 	public function flushSampleLoading() : Bool { return false; }
 }
@@ -90,6 +104,8 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	public function release() : Bool { return false; }
 	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
+	@:hlNative("hlfmod", "studio_eventinstance_set_3d_attributes")
+	public function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
 }
 
 @:keep

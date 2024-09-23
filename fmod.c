@@ -72,6 +72,12 @@ HL_PRIM bool HL_NAME(studio_system_set_parameter_by_name_with_label)(FMOD_STUDIO
 	return false;
 }
 
+HL_PRIM bool HL_NAME(studio_system_set_listener_attributes)(FMOD_STUDIO_SYSTEM *system, int index, FMOD_3D_ATTRIBUTES *attributes, FMOD_VECTOR *attenuationposition) {
+	FMOD_RESULT res = FMOD_Studio_System_SetListenerAttributes(system, index, attributes, attenuationposition);
+	CHKERR(res, true);
+	return false;
+}
+
 HL_PRIM FMOD_STUDIO_BANK *HL_NAME(studio_system_load_bank_file)(FMOD_STUDIO_SYSTEM *system, const char *filename, int flags) {
 	FMOD_STUDIO_BANK *bank;
 	FMOD_RESULT res = FMOD_Studio_System_LoadBankFile(system, filename, flags, &bank);
@@ -93,6 +99,7 @@ DEFINE_PRIM(_FSYSTEM, studio_system_get_core_system, _FSSYSTEM);
 DEFINE_PRIM(_FSEVENTDESCRIPTION, studio_system_get_event, _FSSYSTEM _BYTES);
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name, _FSSYSTEM _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name_with_label, _FSSYSTEM _BYTES _BYTES _BOOL);
+DEFINE_PRIM(_BOOL, studio_system_set_listener_attributes, _FSSYSTEM _I32 _STRUCT _STRUCT);
 DEFINE_PRIM(_FSBANK, studio_system_load_bank_file, _FSSYSTEM _BYTES _I32);
 DEFINE_PRIM(_BOOL, studio_system_flush_sample_loading, _FSSYSTEM);
 
@@ -171,7 +178,14 @@ HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name_with_label)(FMOD
 	return false;
 }
 
+HL_PRIM bool HL_NAME(studio_eventinstance_set_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei, FMOD_3D_ATTRIBUTES *attributes) {
+	FMOD_RESULT res = FMOD_Studio_EventInstance_Set3DAttributes(ei, attributes);
+	CHKERR(res, true);
+	return false;
+}
+
 DEFINE_PRIM(_BOOL, studio_eventinstance_start, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name_with_label, _FSEVENTINSTANCE _BYTES _BYTES _BOOL);
+DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);
