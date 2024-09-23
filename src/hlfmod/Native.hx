@@ -42,13 +42,16 @@ enum abstract LoadBankFlags(Int) {
 #end
 abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	public static function create() : System { return null; }
-	public function release() : Bool { return false; }
-	public function getCoreSystem() : CoreSystem { return null; }
 	// public function setAdvancedSettings(...)
 	public function initialize(maxchannels : Int, studioflags : InitFlags, coreflags : CoreInitFlags, extradriverdata : Dynamic) : Bool { return false; }
+	public function release() : Bool { return false; }
 	public function update() : Bool { return false; }
-	public function loadBankFile(filename : hl.Bytes, flags : LoadBankFlags) : Bank { return null; }
+	public function getCoreSystem() : CoreSystem { return null; }
 	public function getEvent(pathOrId : hl.Bytes) : EventDescription { return null; }
+	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
+	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
+	public function loadBankFile(filename : hl.Bytes, flags : LoadBankFlags) : Bank { return null; }
+	public function flushSampleLoading() : Bool { return false; }
 }
 
 #if !disable_sound
@@ -64,12 +67,29 @@ abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
 abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
 	public function unload() : Bool { return false; }
 	// public function getLoadingState(...) // asynchronous only
+	public function loadSampleData() : Bool { return false; }
+	public function unloadSampleData() : Bool { return false; }
+	// public function getSampleLoadingState() : ...
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "studio_event_description_")
+@:hlNative("hlfmod", "studio_eventdescription_")
 #end
 abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
+	public function loadSampleData() : Bool { return false; }
+	public function unloadSampleData() : Bool { return false; }
+	// public function getSampleLoadingState() : ...
+	public function createInstance() : EventInstance { return null; }
+}
+
+#if !disable_sound
+@:hlNative("hlfmod", "studio_eventinstance_")
+#end
+abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
+	public function start() : Bool { return false; }
+	public function release() : Bool { return false; }
+	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
+	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
 }
 
 @:keep
