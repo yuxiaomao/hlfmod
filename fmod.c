@@ -60,6 +60,13 @@ HL_PRIM FMOD_STUDIO_EVENTDESCRIPTION *HL_NAME(studio_system_get_event)(FMOD_STUD
 	return ed;
 }
 
+HL_PRIM float HL_NAME(studio_system_get_parameter_by_name)(FMOD_STUDIO_SYSTEM *system, const char *name) {
+	float finalvalue;
+	FMOD_RESULT res = FMOD_Studio_System_GetParameterByName(system, name, NULL, &finalvalue);
+	CHKERR(res, 0);
+	return finalvalue;
+}
+
 HL_PRIM bool HL_NAME(studio_system_set_parameter_by_name)(FMOD_STUDIO_SYSTEM *system, const char *name, float value, bool ignoreseekspeed) {
 	FMOD_RESULT res = FMOD_Studio_System_SetParameterByName(system, name, value, ignoreseekspeed);
 	CHKERR(res, true);
@@ -103,6 +110,7 @@ DEFINE_PRIM(_BOOL, studio_system_release, _FSSYSTEM);
 DEFINE_PRIM(_BOOL, studio_system_update, _FSSYSTEM);
 DEFINE_PRIM(_FSYSTEM, studio_system_get_core_system, _FSSYSTEM);
 DEFINE_PRIM(_FSEVENTDESCRIPTION, studio_system_get_event, _FSSYSTEM _BYTES);
+DEFINE_PRIM(_F32, studio_system_get_parameter_by_name, _FSSYSTEM _BYTES);
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name, _FSSYSTEM _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name_with_label, _FSSYSTEM _BYTES _BYTES _BOOL);
 DEFINE_PRIM(_BOOL, studio_system_set_listener_attributes, _FSSYSTEM _I32 _STRUCT _STRUCT);
@@ -157,6 +165,13 @@ HL_PRIM bool HL_NAME(studio_eventinstance_release)(FMOD_STUDIO_EVENTINSTANCE *ei
 	return true;
 }
 
+HL_PRIM float HL_NAME(studio_eventinstance_get_parameter_by_name)(FMOD_STUDIO_EVENTINSTANCE *ei, const char *name) {
+	float finalvalue;
+	FMOD_RESULT res = FMOD_Studio_EventInstance_GetParameterByName(ei, name, NULL, &finalvalue);
+	CHKERR(res, 0);
+	return finalvalue;
+}
+
 HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name)(FMOD_STUDIO_EVENTINSTANCE *ei, const char *name, float value, bool ignoreseekspeed) {
 	FMOD_RESULT res = FMOD_Studio_EventInstance_SetParameterByName(ei, name, value, ignoreseekspeed);
 	CHKERR(res, true);
@@ -177,6 +192,7 @@ HL_PRIM bool HL_NAME(studio_eventinstance_set_3d_attributes)(FMOD_STUDIO_EVENTIN
 
 DEFINE_PRIM(_BOOL, studio_eventinstance_start, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
+DEFINE_PRIM(_F32, studio_eventinstance_get_parameter_by_name, _FSEVENTINSTANCE _BYTES);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name_with_label, _FSEVENTINSTANCE _BYTES _BYTES _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);

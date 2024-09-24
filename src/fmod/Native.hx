@@ -69,6 +69,7 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	public function update() : Bool { return false; }
 	public function getCoreSystem() : CoreSystem { return null; }
 	public function getEvent(pathOrId : hl.Bytes) : EventDescription { return null; }
+	public function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setListenerAttributes(index : Int, attributes : F3DAttributes, attenuationposition : FVector) : Bool { return false; }
@@ -95,6 +96,7 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	public function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
 	public function start() : Bool { return false; }
 	public function release() : Bool { return false; }
+	public function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
 }
