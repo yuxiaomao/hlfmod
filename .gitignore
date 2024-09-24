@@ -3,6 +3,7 @@ api
 *.hl
 example/bin
 example/dump
+example/res
 
 .vs
 *.user

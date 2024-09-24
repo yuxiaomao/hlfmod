@@ -92,6 +92,8 @@ abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 @:hlNative("hlfmod", "studio_eventinstance_")
 #end
 abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
+	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_get_3d_attributes") #end
+	public function get3DAttributes() : F3DAttributes { return null; }
 	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_set_3d_attributes") #end
 	public function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
 	public function start() : Bool { return false; }

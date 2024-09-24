@@ -153,6 +153,19 @@ DEFINE_PRIM(_I32, studio_eventdescription_get_loading_state, _FSEVENTDESCRIPTION
 
 // ----- FMOD_STUDIO_EVENTINSTANCE -----
 
+HL_PRIM FMOD_3D_ATTRIBUTES *HL_NAME(studio_eventinstance_get_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei) {
+	FMOD_3D_ATTRIBUTES *attributes = {0};
+	FMOD_RESULT res = FMOD_Studio_EventInstance_Get3DAttributes(ei, attributes);
+	CHKERR(res, NULL);
+	return attributes;
+}
+
+HL_PRIM bool HL_NAME(studio_eventinstance_set_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei, FMOD_3D_ATTRIBUTES *attributes) {
+	FMOD_RESULT res = FMOD_Studio_EventInstance_Set3DAttributes(ei, attributes);
+	CHKERR(res, true);
+	return false;
+}
+
 HL_PRIM bool HL_NAME(studio_eventinstance_start)(FMOD_STUDIO_EVENTINSTANCE *ei) {
 	FMOD_RESULT res = FMOD_Studio_EventInstance_Start(ei);
 	CHKERR(res, false);
@@ -184,18 +197,13 @@ HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name_with_label)(FMOD
 	return false;
 }
 
-HL_PRIM bool HL_NAME(studio_eventinstance_set_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei, FMOD_3D_ATTRIBUTES *attributes) {
-	FMOD_RESULT res = FMOD_Studio_EventInstance_Set3DAttributes(ei, attributes);
-	CHKERR(res, true);
-	return false;
-}
-
+DEFINE_PRIM(_STRUCT, studio_eventinstance_get_3d_attributes, _FSEVENTINSTANCE);
+DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);
 DEFINE_PRIM(_BOOL, studio_eventinstance_start, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
 DEFINE_PRIM(_F32, studio_eventinstance_get_parameter_by_name, _FSEVENTINSTANCE _BYTES);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name_with_label, _FSEVENTINSTANCE _BYTES _BYTES _BOOL);
-DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);
 
 // ----- FMOD_STUDIO_BANK -----
 

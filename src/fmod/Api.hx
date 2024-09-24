@@ -1,5 +1,27 @@
 package fmod;
 
+class Event {
+	var desc : Native.EventDescription;
+	var inst : Native.EventInstance;
+
+	public function new(desc : Native.EventDescription) {
+		this.desc = desc;
+		this.inst = desc.createInstance();
+	}
+
+	public function play() {
+		inst.start();
+	}
+
+	public function setParameter(name : String, value : Float) {
+		inst.setParameterByName(@:privateAccess name.toUtf8(), value, false);
+	}
+
+	public function release() {
+		inst.release();
+	}
+}
+
 class Api {
 	static var initialized = false;
 	static var system : Native.System;
@@ -13,13 +35,16 @@ class Api {
 		basePath = path + "/";
 		loadedBank = [];
 		initialized = true;
-		loadedBank(masterBank);
+		loadBank(masterBank);
+		return true;
 	}
 
 	public static function release() {
 		if (!initialized) return;
-		system.release();
 		initialized = false;
+		system.release();
+		basePath = "";
+		loadedBank = [];
 	}
 
 	public static function update() {
@@ -40,6 +65,14 @@ class Api {
 			bank.unload();
 			loadedBank.remove(name);
 		}
+	}
+
+	public static function getEvent(name : String) : Event {
+		if (!initialized) return null;
+		var ed = system.getEvent(@:privateAccess name.toUtf8());
+		if (ed == null)
+			return null;
+		return new Event(ed);
 	}
 
 }
