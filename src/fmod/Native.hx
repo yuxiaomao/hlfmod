@@ -1,4 +1,4 @@
-package hlfmod;
+package fmod;
 
 enum abstract InitFlags(Int) {
 	var NORMAL = 0x00000000;
@@ -78,13 +78,6 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "core_system_")
-#end
-abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
-	// public function setSoftwareFormat(...)
-}
-
-#if !disable_sound
 @:hlNative("hlfmod", "studio_eventdescription_")
 #end
 abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
@@ -115,6 +108,13 @@ abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
 	public function unloadSampleData() : Bool { return false; }
 	public function getLoadingState() : LoadingState { return ERROR; }
 	public function getSampleLoadingState() : LoadingState { return ERROR; }
+}
+
+#if !disable_sound
+@:hlNative("hlfmod", "core_system_")
+#end
+abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
+	// public function setSoftwareFormat(...)
 }
 
 @:keep
