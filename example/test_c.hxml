@@ -1,0 +1,8 @@
+-cp .
+-cp ../src
+-D hl-ver=1.15.0
+#-lib hlfmod
+-main Main
+-hl bin/hlout/test.c
+-D hlgen.makefile=ci
+-D hlgen.makefilepath=bin

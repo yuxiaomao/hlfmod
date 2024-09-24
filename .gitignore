@@ -1,7 +1,11 @@
 api
+
+*.hl
+example/bin
+example/dump
+
 .vs
 *.user
 x64
-*.hl
 *.o
 *.hdll

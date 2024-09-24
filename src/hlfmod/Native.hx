@@ -37,6 +37,14 @@ enum abstract LoadBankFlags(Int) {
 	@:op(a | b) static function or(a:LoadBankFlags, b:LoadBankFlags) : LoadBankFlags;
 }
 
+enum abstract LoadingState(Int) {
+	var UNLOADING;
+	var UNLOADED;
+	var LOADING;
+	var LOADED;
+	var ERROR;
+}
+
 @:struct class FVector {
 	var x : Single;
 	var y : Single;
@@ -65,6 +73,7 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setListenerAttributes(index : Int, attributes : F3DAttributes, attenuationposition : FVector) : Bool { return false; }
 	public function loadBankFile(filename : hl.Bytes, flags : LoadBankFlags) : Bank { return null; }
+	public function flushCommands() : Bool { return false; }
 	public function flushSampleLoading() : Bool { return false; }
 }
 
@@ -76,36 +85,36 @@ abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "studio_bank_")
-#end
-abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
-	public function unload() : Bool { return false; }
-	// public function getLoadingState(...) // asynchronous only
-	public function loadSampleData() : Bool { return false; }
-	public function unloadSampleData() : Bool { return false; }
-	// public function getSampleLoadingState() : ...
-}
-
-#if !disable_sound
 @:hlNative("hlfmod", "studio_eventdescription_")
 #end
 abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
+	public function createInstance() : EventInstance { return null; }
 	public function loadSampleData() : Bool { return false; }
 	public function unloadSampleData() : Bool { return false; }
-	// public function getSampleLoadingState() : ...
-	public function createInstance() : EventInstance { return null; }
+	public function getSampleLoadingState() : LoadingState { return ERROR; }
 }
 
 #if !disable_sound
 @:hlNative("hlfmod", "studio_eventinstance_")
 #end
 abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
+	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_set_3d_attributes") #end
+	public function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
 	public function start() : Bool { return false; }
 	public function release() : Bool { return false; }
 	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
-	@:hlNative("hlfmod", "studio_eventinstance_set_3d_attributes")
-	public function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
+}
+
+#if !disable_sound
+@:hlNative("hlfmod", "studio_bank_")
+#end
+abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
+	public function unload() : Bool { return false; }
+	public function loadSampleData() : Bool { return false; }
+	public function unloadSampleData() : Bool { return false; }
+	public function getLoadingState() : LoadingState { return ERROR; }
+	public function getSampleLoadingState() : LoadingState { return ERROR; }
 }
 
 @:keep

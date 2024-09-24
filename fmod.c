@@ -15,7 +15,7 @@
 IMPORT void hl_sys_print( vbyte *msg );
 static void ReportFmodError( FMOD_RESULT err, int line ) {
 	static char tmp[256];
-	snprintf(tmp, 256, "FMOD error: %s line %d", FMOD_ErrorString(err), line);
+	snprintf(tmp, 256, "FMOD Error (line %d): %s\n", line, FMOD_ErrorString(err));
 	hl_sys_print((vbyte*)hl_to_utf16(tmp));
 }
 
@@ -85,6 +85,12 @@ HL_PRIM FMOD_STUDIO_BANK *HL_NAME(studio_system_load_bank_file)(FMOD_STUDIO_SYST
 	return bank;
 }
 
+HL_PRIM bool HL_NAME(studio_system_flush_commands)(FMOD_STUDIO_SYSTEM *system) {
+	FMOD_RESULT res = FMOD_Studio_System_FlushCommands(system);
+	CHKERR(res, true);
+	return false;
+}
+
 HL_PRIM bool HL_NAME(studio_system_flush_sample_loading)(FMOD_STUDIO_SYSTEM *system) {
 	FMOD_RESULT res = FMOD_Studio_System_FlushSampleLoading(system);
 	CHKERR(res, true);
@@ -101,33 +107,17 @@ DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name, _FSSYSTEM _BYTES _F32 _B
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name_with_label, _FSSYSTEM _BYTES _BYTES _BOOL);
 DEFINE_PRIM(_BOOL, studio_system_set_listener_attributes, _FSSYSTEM _I32 _STRUCT _STRUCT);
 DEFINE_PRIM(_FSBANK, studio_system_load_bank_file, _FSSYSTEM _BYTES _I32);
+DEFINE_PRIM(_BOOL, studio_system_flush_commands, _FSSYSTEM);
 DEFINE_PRIM(_BOOL, studio_system_flush_sample_loading, _FSSYSTEM);
 
-// ----- FMOD_STUDIO_BANK -----
-
-HL_PRIM bool HL_NAME(studio_bank_unload)(FMOD_STUDIO_BANK *bank) {
-	FMOD_RESULT res = FMOD_Studio_Bank_Unload(bank);
-	CHKERR(res, false);
-	return true;
-}
-
-HL_PRIM bool HL_NAME(studio_bank_load_sample_data)(FMOD_STUDIO_BANK *bank) {
-	FMOD_RESULT res = FMOD_Studio_Bank_LoadSampleData(bank);
-	CHKERR(res, false);
-	return true;
-}
-
-HL_PRIM bool HL_NAME(studio_bank_unload_sample_data)(FMOD_STUDIO_BANK *bank) {
-	FMOD_RESULT res = FMOD_Studio_Bank_UnloadSampleData(bank);
-	CHKERR(res, false);
-	return true;
-}
-
-DEFINE_PRIM(_BOOL, studio_bank_unload, _FSBANK);
-DEFINE_PRIM(_BOOL, studio_bank_load_sample_data, _FSBANK);
-DEFINE_PRIM(_BOOL, studio_bank_unload_sample_data, _FSBANK);
-
 // ----- FMOD_STUDIO_EVENTDESCRIPTION -----
+
+HL_PRIM FMOD_STUDIO_EVENTINSTANCE *HL_NAME(studio_eventdescription_create_instance)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	FMOD_STUDIO_EVENTINSTANCE *ei;
+	FMOD_RESULT res = FMOD_Studio_EventDescription_CreateInstance(ed, &ei);
+	CHKERR(res, NULL);
+	return ei;
+}
 
 HL_PRIM bool HL_NAME(studio_eventdescription_load_sample_data)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
 	FMOD_RESULT res = FMOD_Studio_EventDescription_LoadSampleData(ed);
@@ -141,16 +131,17 @@ HL_PRIM bool HL_NAME(studio_eventdescription_unload_sample_data)(FMOD_STUDIO_EVE
 	return true;
 }
 
-HL_PRIM FMOD_STUDIO_EVENTINSTANCE *HL_NAME(studio_eventdescription_create_instance)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
-	FMOD_STUDIO_EVENTINSTANCE *ei;
-	FMOD_RESULT res = FMOD_Studio_EventDescription_CreateInstance(ed, &ei);
-	CHKERR(res, NULL);
-	return ei;
+HL_PRIM int HL_NAME(studio_eventdescription_get_loading_state)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	FMOD_STUDIO_LOADING_STATE state;
+	FMOD_RESULT res = FMOD_Studio_EventDescription_GetSampleLoadingState(ed, &state);
+	CHKERR(res, FMOD_STUDIO_LOADING_STATE_ERROR);
+	return state;
 }
 
+DEFINE_PRIM(_FSEVENTINSTANCE, studio_eventdescription_create_instance, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_BOOL, studio_eventdescription_load_sample_data, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_BOOL, studio_eventdescription_unload_sample_data, _FSEVENTDESCRIPTION);
-DEFINE_PRIM(_FSEVENTINSTANCE, studio_eventdescription_create_instance, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_I32, studio_eventdescription_get_loading_state, _FSEVENTDESCRIPTION);
 
 // ----- FMOD_STUDIO_EVENTINSTANCE -----
 
@@ -189,3 +180,43 @@ DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name_with_label, _FSEVENTINSTANCE _BYTES _BYTES _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);
+
+// ----- FMOD_STUDIO_BANK -----
+
+HL_PRIM bool HL_NAME(studio_bank_unload)(FMOD_STUDIO_BANK *bank) {
+	FMOD_RESULT res = FMOD_Studio_Bank_Unload(bank);
+	CHKERR(res, false);
+	return true;
+}
+
+HL_PRIM bool HL_NAME(studio_bank_load_sample_data)(FMOD_STUDIO_BANK *bank) {
+	FMOD_RESULT res = FMOD_Studio_Bank_LoadSampleData(bank);
+	CHKERR(res, false);
+	return true;
+}
+
+HL_PRIM bool HL_NAME(studio_bank_unload_sample_data)(FMOD_STUDIO_BANK *bank) {
+	FMOD_RESULT res = FMOD_Studio_Bank_UnloadSampleData(bank);
+	CHKERR(res, false);
+	return true;
+}
+
+HL_PRIM int HL_NAME(studio_bank_get_loading_state)(FMOD_STUDIO_BANK *bank) {
+	FMOD_STUDIO_LOADING_STATE state;
+	FMOD_RESULT res = FMOD_Studio_Bank_GetLoadingState(bank, &state);
+	CHKERR(res, FMOD_STUDIO_LOADING_STATE_ERROR);
+	return state;
+}
+
+HL_PRIM int HL_NAME(studio_bank_get_sample_loading_state)(FMOD_STUDIO_BANK *bank) {
+	FMOD_STUDIO_LOADING_STATE state;
+	FMOD_RESULT res = FMOD_Studio_Bank_GetSampleLoadingState(bank, &state);
+	CHKERR(res, FMOD_STUDIO_LOADING_STATE_ERROR);
+	return state;
+}
+
+DEFINE_PRIM(_BOOL, studio_bank_unload, _FSBANK);
+DEFINE_PRIM(_BOOL, studio_bank_load_sample_data, _FSBANK);
+DEFINE_PRIM(_BOOL, studio_bank_unload_sample_data, _FSBANK);
+DEFINE_PRIM(_I32, studio_bank_get_loading_state, _FSBANK);
+DEFINE_PRIM(_I32, studio_bank_get_sample_loading_state, _FSBANK);
