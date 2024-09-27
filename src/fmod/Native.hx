@@ -45,17 +45,41 @@ enum abstract LoadingState(Int) {
 	var ERROR;
 }
 
-@:struct class FVector {
-	var x : Single;
-	var y : Single;
-	var z : Single;
+@:struct class FVectorImpl {
+	public var x : Single;
+	public var y : Single;
+	public var z : Single;
+
+	public function new(x : Single, y : Single, z : Single) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+}
+
+@:forward abstract FVector(FVectorImpl) from FVectorImpl to FVectorImpl {
+	public inline function new(x : Single, y : Single, z : Single) {
+		this = new FVectorImpl(x, y, z);
+	}
+
+	#if heaps
+	/**
+	 * FMOD uses Y up, X right, (default left-handed) Z away;
+	 * Heaps uses Z up, X right, left-handed Y towards.
+	 */
+	@:from public static inline function fromVector(vector : h3d.Vector) {
+		return new FVector(vector.x, vector.z, -vector.y);
+	}
+	#end
 }
 
 @:struct class F3DAttributes {
-	@:packed var position : FVector;
-	@:packed var velocity : FVector;
-	@:packed var forward : FVector;
-	@:packed var up : FVector;
+	@:packed public var position : FVector;
+	@:packed public var velocity : FVector;
+	@:packed public var forward : FVector;
+	@:packed public var up : FVector;
+
+	public function new() {}
 }
 
 #if !disable_sound
