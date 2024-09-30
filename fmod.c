@@ -11,6 +11,7 @@
 #define _FSEVENTDESCRIPTION _ABSTRACT(FMOD_STUDIO_EVENTDESCRIPTION)
 #define _FSEVENTINSTANCE _ABSTRACT(FMOD_STUDIO_EVENTINSTANCE)
 #define _FSBUS _ABSTRACT(FMOD_STUDIO_BUS)
+#define _FSVCA _ABSTRACT(FMOD_STUDIO_VCA)
 #define _FSBANK _ABSTRACT(FMOD_STUDIO_BANK)
 
 IMPORT void hl_sys_print( vbyte *msg );
@@ -61,6 +62,12 @@ HL_PRIM FMOD_STUDIO_BUS *HL_NAME(studio_system_get_bus)(FMOD_STUDIO_SYSTEM *syst
 	return bus;
 }
 
+HL_PRIM FMOD_STUDIO_BUS *HL_NAME(studio_system_get_vca)(FMOD_STUDIO_SYSTEM *system, const char *pathOrId) {
+	FMOD_STUDIO_VCA *vca;
+	CHKERR(FMOD_Studio_System_GetVCA(system, pathOrId, &vca), NULL);
+	return vca;
+}
+
 HL_PRIM float HL_NAME(studio_system_get_parameter_by_name)(FMOD_STUDIO_SYSTEM *system, const char *name) {
 	float finalvalue;
 	CHKERR(FMOD_Studio_System_GetParameterByName(system, name, NULL, &finalvalue), 0);
@@ -105,6 +112,7 @@ DEFINE_PRIM(_BOOL, studio_system_update, _FSSYSTEM);
 DEFINE_PRIM(_FSYSTEM, studio_system_get_core_system, _FSSYSTEM);
 DEFINE_PRIM(_FSEVENTDESCRIPTION, studio_system_get_event, _FSSYSTEM _BYTES);
 DEFINE_PRIM(_FSBUS, studio_system_get_bus, _FSSYSTEM _BYTES);
+DEFINE_PRIM(_FSVCA, studio_system_get_vca, _FSSYSTEM _BYTES);
 DEFINE_PRIM(_F32, studio_system_get_parameter_by_name, _FSSYSTEM _BYTES);
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name, _FSSYSTEM _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name_with_label, _FSSYSTEM _BYTES _BYTES _BOOL);
@@ -181,6 +189,54 @@ HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name_with_label)(FMOD
 	return true;
 }
 
+typedef struct
+{
+	FMOD_STUDIO_SYSTEM *studioSystem;
+	FMOD_SYSTEM *coreSystem;
+	const char *dialogueString;
+} ProgrammerSoundContext;
+
+#define CHKERR_FMOD(op) CHKERR(op, __ret)
+
+FMOD_RESULT F_CALL programmerSoundCallback(FMOD_STUDIO_EVENT_CALLBACK_TYPE type, FMOD_STUDIO_EVENTINSTANCE* ei, void *parameters)
+{
+	if (type == FMOD_STUDIO_EVENT_CALLBACK_CREATE_PROGRAMMER_SOUND)
+	{
+		FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES* props = (FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES*)parameters;
+
+		// Get our context from the event instance user data
+		ProgrammerSoundContext* context = NULL;
+		CHKERR_FMOD( FMOD_Studio_EventInstance_GetUserData(ei, (void**)&context) );
+
+		// Find the audio file in the audio table with the key
+		FMOD_STUDIO_SOUND_INFO info;
+		CHKERR_FMOD( FMOD_Studio_System_GetSoundInfo(context->studioSystem, context->dialogueString, &info) );
+
+		FMOD_SOUND* sound = NULL;
+		CHKERR_FMOD( FMOD_System_CreateSound(context->coreSystem, info.name_or_data, FMOD_LOOP_NORMAL | FMOD_CREATECOMPRESSEDSAMPLE | FMOD_NONBLOCKING | info.mode, &info.exinfo, &sound) );
+
+		// Pass the sound to FMOD
+		props->sound = sound;
+		props->subsoundIndex = info.subsoundindex;
+	}
+	else if (type == FMOD_STUDIO_EVENT_CALLBACK_DESTROY_PROGRAMMER_SOUND)
+	{
+		FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES* props = (FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES*)parameters;
+
+		// Obtain the sound
+		FMOD_SOUND* sound = props->sound;
+
+		// Release the sound
+		CHKERR_FMOD( FMOD_Sound_Release(sound) );
+	}
+	return FMOD_OK;
+}
+
+HL_PRIM bool HL_NAME(studio_eventinstance_set_callback)(FMOD_STUDIO_EVENTINSTANCE *ei, int callbackmask) {
+	CHKERR(FMOD_Studio_EventInstance_SetCallback(ei, programmerSoundCallback, callbackmask), false);
+	return true;
+}
+
 DEFINE_PRIM(_STRUCT, studio_eventinstance_get_3d_attributes, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);
 DEFINE_PRIM(_BOOL, studio_eventinstance_start, _FSEVENTINSTANCE);
@@ -188,6 +244,7 @@ DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
 DEFINE_PRIM(_F32, studio_eventinstance_get_parameter_by_name, _FSEVENTINSTANCE _BYTES);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name_with_label, _FSEVENTINSTANCE _BYTES _BYTES _BOOL);
+DEFINE_PRIM(_BOOL, studio_eventinstance_set_callback, _FSEVENTINSTANCE _I32);
 
 // ----- FMOD_STUDIO_BUS -----
 
@@ -230,6 +287,22 @@ DEFINE_PRIM(_BOOL, studio_bus_get_paused, _FSBUS);
 DEFINE_PRIM(_BOOL, studio_bus_set_paused, _FSBUS _BOOL);
 DEFINE_PRIM(_BOOL, studio_bus_get_mute, _FSBUS);
 DEFINE_PRIM(_BOOL, studio_bus_set_mute, _FSBUS _BOOL);
+
+// ----- FMOD_STUDIO_BUS -----
+
+HL_PRIM float HL_NAME(studio_vca_get_volume)(FMOD_STUDIO_VCA *vca) {
+	float finalvalue;
+	CHKERR(FMOD_Studio_VCA_GetVolume(vca, NULL, &finalvalue), 0);
+	return finalvalue;
+}
+
+HL_PRIM bool HL_NAME(studio_vca_set_volume)(FMOD_STUDIO_VCA *vca, float volume) {
+	CHKERR(FMOD_Studio_VCA_SetVolume(vca, volume), false);
+	return true;
+}
+
+DEFINE_PRIM(_F32, studio_vca_get_volume, _FSVCA);
+DEFINE_PRIM(_BOOL, studio_vca_set_volume, _FSVCA _F32);
 
 // ----- FMOD_STUDIO_BANK -----
 

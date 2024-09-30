@@ -29,6 +29,12 @@ enum abstract CoreInitFlags(Int) {
 	@:op(a | b) static function or(a:CoreInitFlags, b:CoreInitFlags) : CoreInitFlags;
 }
 
+enum abstract EventCallbackType(Int) {
+	var CREATE_PROGRAMMER_SOUND = 0x00000080;
+	var DESTROY_PROGRAMMER_SOUND = 0x00000100;
+	@:op(a | b) static function or(a:EventCallbackType, b:EventCallbackType) : EventCallbackType;
+}
+
 enum abstract LoadBankFlags(Int) {
 	var NORMAL = 0x00000000;
 	var NONBLOCKING = 0x00000001;
@@ -122,6 +128,7 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	function getCoreSystem() : CoreSystem { return null; }
 	function getEvent(pathOrId : hl.Bytes) : EventDescription { return null; }
 	function getBus(pathOrId : hl.Bytes) : Bus { return null; }
+	function getVCA(pathOrId : hl.Bytes) : Vca { return null; }
 	function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
@@ -154,6 +161,7 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
+	function setCallback(mask : EventCallbackType) : Bool { return false; }
 }
 
 #if !disable_sound
@@ -166,6 +174,14 @@ abstract Bus(hl.Abstract<"FMOD_STUDIO_BUS">) {
 	function setPaused(paused : Bool) : Bool { return false; }
 	function getMute() : Bool { return false; }
 	function setMute(mute : Bool) : Bool { return false; }
+}
+
+#if !disable_sound
+@:hlNative("hlfmod", "studio_vca_")
+#end
+abstract Vca(hl.Abstract<"FMOD_STUDIO_VCA">) {
+	function getVolume() : Single { return 0; }
+	function setVolume(volume : Single) : Bool { return false; }
 }
 
 #if !disable_sound

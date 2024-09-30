@@ -30,12 +30,10 @@ class TestHeaps extends SampleApp {
 		}
 
 		// Control
-		addSlider("Global vol", function() { return fmod.Api.getVolume("bus:/"); }, function(v) { fmod.Api.setVolume("bus:/", v); });
+		addSlider("Music vol", function() { return fmod.Api.getVcaVolume("vca:/music"); }, function(v) { fmod.Api.setVcaVolume("vca:/music", v); });
+		addSlider("SFX vol", function() { return fmod.Api.getVcaVolume("vca:/gameplay_sfx"); }, function(v) { fmod.Api.setVcaVolume("vca:/gameplay_sfx", v); });
 		addCheck("Beeper", function() { return beeper; }, function(v) { beeper = v; });
 		if ( music != null ) {
-			addCheck("Music mute", function() { return fmod.Api.getMute("bus:/music"); }, function(v) { fmod.Api.setMute("bus:/music", v); });
-			addSlider("Music vol", function() { return fmod.Api.getVolume("bus:/music"); }, function(v) { fmod.Api.setVolume("bus:/music", v); });
-			addSlider("SFX vol", function() { return fmod.Api.getVolume("bus:/gameplay_sfx"); }, function(v) { fmod.Api.setVolume("bus:/gameplay_sfx", v); });
 			addText("SFX Position");
 			addSlider("X", function() { return objPosition.x; }, function(v) { objPosition.x = v; obj.x = v; sfx.setPosition(objPosition);}, -500, 500);
 			addSlider("Y", function() { return objPosition.y; }, function(v) { objPosition.y = v; obj.y = v; sfx.setPosition(objPosition);}, -500, 500);
@@ -48,6 +46,7 @@ class TestHeaps extends SampleApp {
 	}
 
 	override function update(dt:Float) {
+		// fmod.Api.setCameraListenerPosition(s3d.camera, 0);
 		fmod.Api.update();
 		if ( beeper ) {
 			time += dt;
