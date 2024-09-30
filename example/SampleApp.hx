@@ -124,4 +124,18 @@ class SampleApp extends hxd.App {
 		return tf;
 	}
 
+	// 3D
+	function addCube(scale = 0.1) {
+		var prim = new h3d.prim.Cube();
+		prim.translate( -0.5, -0.5, -0.5);
+		prim.unindex();
+		prim.addNormals();
+		prim.addUVs();
+		var obj = new h3d.scene.Mesh(prim, s3d);
+		obj.material.color.setColor(0xFFB280);
+		obj.scale(scale);
+		obj.material.shadows = false;
+		return obj;
+	}
+
 }

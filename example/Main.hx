@@ -17,7 +17,7 @@ class Main {
 		e.release();
 		fmod.Api.release();
 		#else
-		hxd.Res.initEmbed();
+		hxd.Res.initLocal();
 		new TestHeaps();
 		#end
 	}
