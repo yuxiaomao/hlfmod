@@ -74,12 +74,40 @@ enum abstract LoadingState(Int) {
 }
 
 @:struct class F3DAttributes {
-	@:packed public var position : FVector;
-	@:packed public var velocity : FVector;
-	@:packed public var forward : FVector;
-	@:packed public var up : FVector;
+	// Assign struct to packed does not work well, so we'll just set them manually
+	@:packed public var position(default, set) : FVector;
+	@:packed public var velocity(default, set) : FVector;
+	@:packed public var forward(default, set) : FVector;
+	@:packed public var up(default, set) : FVector;
 
 	public function new() {}
+	public inline function set_position(p : FVector) {
+		position.x = p.x;
+		position.y = p.y;
+		position.z = p.z;
+		return position;
+	}
+
+	public inline function set_velocity(p : FVector) {
+		velocity.x = p.x;
+		velocity.y = p.y;
+		velocity.z = p.z;
+		return velocity;
+	}
+
+	public inline function set_forward(p : FVector) {
+		forward.x = p.x;
+		forward.y = p.y;
+		forward.z = p.z;
+		return forward;
+	}
+
+	public inline function set_up(p : FVector) {
+		up.x = p.x;
+		up.y = p.y;
+		up.z = p.z;
+		return up;
+	}
 }
 
 #if !disable_sound

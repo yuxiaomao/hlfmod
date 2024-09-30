@@ -23,7 +23,7 @@ class TestHeaps extends SampleApp {
 
 		// Sound
 		music = fmod.Api.getEvent("event:/music/remix/01_forsaken_city");
-		sfx = fmod.Api.getEvent("event:/game/general/bird_squawk");
+		sfx = fmod.Api.getEvent("event:/game/general/seed_poof");
 		if( music != null ) {
 			trace("Playing "+music);
 			music.play();
@@ -37,13 +37,13 @@ class TestHeaps extends SampleApp {
 			addSlider("Music vol", function() { return fmod.Api.getVolume("bus:/music"); }, function(v) { fmod.Api.setVolume("bus:/music", v); });
 			addSlider("SFX vol", function() { return fmod.Api.getVolume("bus:/gameplay_sfx"); }, function(v) { fmod.Api.setVolume("bus:/gameplay_sfx", v); });
 			addText("SFX Position");
-			addSlider("X", function() { return objPosition.x; }, function(v) { objPosition.x = v; obj.x = v; sfx.setPosition(objPosition);}, -10, 10);
-			addSlider("Y", function() { return objPosition.y; }, function(v) { objPosition.y = v; obj.y = v; sfx.setPosition(objPosition);}, -10, 10);
-			addSlider("Z", function() { return objPosition.z; }, function(v) { objPosition.z = v; obj.z = v; sfx.setPosition(objPosition);}, -10, 10);
+			addSlider("X", function() { return objPosition.x; }, function(v) { objPosition.x = v; obj.x = v; sfx.setPosition(objPosition);}, -500, 500);
+			addSlider("Y", function() { return objPosition.y; }, function(v) { objPosition.y = v; obj.y = v; sfx.setPosition(objPosition);}, -500, 500);
+			addSlider("Z", function() { return objPosition.z; }, function(v) { objPosition.z = v; obj.z = v; sfx.setPosition(objPosition);}, -500, 500);
 			addText("Camera(Listener) Position");
-			addSlider("X", function() { return s3d.camera.pos.x; }, function (v) { s3d.camera.pos.x = v; fmod.Api.setCameraListenerPosition(s3d.camera, 0);}, -10, 10);
-			addSlider("Y", function() { return s3d.camera.pos.y; }, function (v) { s3d.camera.pos.y = v; fmod.Api.setCameraListenerPosition(s3d.camera, 0);}, -10, 10);
-			addSlider("Z", function() { return s3d.camera.pos.z; }, function (v) { s3d.camera.pos.z = v; fmod.Api.setCameraListenerPosition(s3d.camera, 0);}, -10, 10);
+			addSlider("X", function() { return s3d.camera.pos.x; }, function (v) { s3d.camera.pos.x = v; fmod.Api.setCameraListenerPosition(s3d.camera, 0);}, -500, 500);
+			addSlider("Y", function() { return s3d.camera.pos.y; }, function (v) { s3d.camera.pos.y = v; fmod.Api.setCameraListenerPosition(s3d.camera, 0);}, -500, 500);
+			addSlider("Z", function() { return s3d.camera.pos.z; }, function (v) { s3d.camera.pos.z = v; fmod.Api.setCameraListenerPosition(s3d.camera, 0);}, -500, 500);
 		}
 	}
 

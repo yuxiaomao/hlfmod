@@ -5,10 +5,14 @@ package fmod;
 class Event {
 	var desc : Native.EventDescription;
 	var inst : Native.EventInstance;
+	var attributes : Native.F3DAttributes;
 
 	public function new(desc : Native.EventDescription) {
 		this.desc = desc;
-		this.inst = desc.createInstance();
+		inst = desc.createInstance();
+		attributes = new Native.F3DAttributes();
+		attributes.forward = new fmod.Native.FVector(0,0,1);
+		attributes.up = new fmod.Native.FVector(0,1,0);
 	}
 
 	public function play() {
@@ -25,7 +29,6 @@ class Event {
 
 	#if heaps
 	public function setPosition(position : h3d.Vector) {
-		var attributes = new Native.F3DAttributes();
 		attributes.position = position;
 		inst.set3DAttributes(attributes);
 	}
@@ -115,18 +118,20 @@ class Api {
 	}
 
 	#if heaps
+	static var cameraAttributes : Native.F3DAttributes;
 	public static function setCameraListenerPosition(camera : h3d.Camera, camDistance : Float) {
 		if (!initialized) return;
+		if (cameraAttributes == null)
+			cameraAttributes = new Native.F3DAttributes();
 		var forward = camera.target.sub(camera.pos).normalized();
 		var up = camera.up.normalized();
 		var right = forward.cross(up);
 		if( right.lengthSq() > 0.1 ) {
 			var position = camera.pos.add(forward.scaled(camDistance));
-			var attributes = new Native.F3DAttributes();
-			attributes.position = position;
-			attributes.forward = forward;
-			attributes.up = up;
-			system.setListenerAttributes(0, attributes, null);
+			cameraAttributes.position = position;
+			cameraAttributes.forward = forward;
+			cameraAttributes.up = up;
+			system.setListenerAttributes(0, cameraAttributes, null);
 		}
 	}
 	#end

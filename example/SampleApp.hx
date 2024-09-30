@@ -127,7 +127,7 @@ class SampleApp extends hxd.App {
 	}
 
 	// 3D
-	function addCube(scale = 0.1) {
+	function addCube(scale = 1) {
 		var prim = new h3d.prim.Cube();
 		prim.translate( -0.5, -0.5, -0.5);
 		prim.unindex();
