@@ -71,21 +71,23 @@ class SampleApp extends hxd.App {
 
 		var size = 10;
 		var b = new h2d.Graphics(f);
-		function redraw() {
+		function redraw(?fill : Bool) {
 			b.clear();
 			b.beginFill(0x808080);
 			b.drawRect(0, 0, size, size);
 			b.beginFill(0);
 			b.drawRect(1, 1, size-2, size-2);
-			if( get() ) {
+			// Sometimes get() is not changed immediatly
+			if( fill != null ? fill : get() ) {
 				b.beginFill(0xC0C0C0);
 				b.drawRect(2, 2, size-4, size-4);
 			}
 		}
 		var i = new h2d.Interactive(size, size, b);
 		i.onClick = function(_) {
-			set(!get());
-			redraw();
+			var g = get();
+			set(!g);
+			redraw(!g);
 		};
 		redraw();
 		return i;

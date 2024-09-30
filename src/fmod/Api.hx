@@ -34,14 +34,16 @@ class Api {
 	static var initialized = false;
 	static var system : Native.System;
 	static var basePath : String;
-	static var loadedBank : Map<String, Native.Bank>;
+	static var buses : Map<String, Native.Bus>;
+	static var loadedBanks : Map<String, Native.Bank>;
 
 	public static function init(path : String, masterBank : String) {
 		system = Native.System.create();
 		// set additional config here
 		system.initialize(32, NORMAL, NORMAL, null);
 		basePath = path + "/";
-		loadedBank = [];
+		buses = [];
+		loadedBanks = [];
 		initialized = true;
 		loadBank(masterBank);
 		return true;
@@ -52,7 +54,7 @@ class Api {
 		initialized = false;
 		system.release();
 		basePath = "";
-		loadedBank = [];
+		loadedBanks = [];
 	}
 
 	public static function update() {
@@ -68,11 +70,37 @@ class Api {
 
 	public static function unloadBank(name : String) {
 		if (!initialized) return;
-		var bank = loadedBank.get(name);
+		var bank = loadedBanks.get(name);
 		if (bank != null) {
 			bank.unload();
-			loadedBank.remove(name);
+			loadedBanks.remove(name);
 		}
+	}
+
+	static inline function getBus(busName : String) {
+		var bus = buses.get(busName);
+		if (bus == null) {
+			bus = system.getBus(@:privateAccess busName.toUtf8());
+			buses.set(busName, bus);
+		}
+		return bus;
+	}
+
+	public static function getVolume(busName : String) {
+		return getBus(busName).getVolume();
+	}
+
+
+	public static function setVolume(busName : String, volume : Float) {
+		getBus(busName).setVolume(volume);
+	}
+
+	public static function getMute(busName : String) {
+		return getBus(busName).getMute();
+	}
+
+	public static function setMute(busName : String, mute : Bool) {
+		getBus(busName).setMute(mute);
 	}
 
 	public static function getEvent(name : String) : Event {

@@ -93,6 +93,7 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	public function update() : Bool { return false; }
 	public function getCoreSystem() : CoreSystem { return null; }
 	public function getEvent(pathOrId : hl.Bytes) : EventDescription { return null; }
+	public function getBus(pathOrId : hl.Bytes) : Bus { return null; }
 	public function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
@@ -125,6 +126,18 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	public function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
+}
+
+#if !disable_sound
+@:hlNative("hlfmod", "studio_bus_")
+#end
+abstract Bus(hl.Abstract<"FMOD_STUDIO_BUS">) {
+	public function getVolume() : Single { return 0; }
+	public function setVolume(volume : Single) : Bool { return false; }
+	public function getPaused() : Bool { return false; }
+	public function setPaused(paused : Bool) : Bool { return false; }
+	public function getMute() : Bool { return false; }
+	public function setMute(mute : Bool) : Bool { return false; }
 }
 
 #if !disable_sound

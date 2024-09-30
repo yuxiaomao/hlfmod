@@ -8,9 +8,10 @@
 
 #define _FSSYSTEM _ABSTRACT(FMOD_STUDIO_SYSTEM)
 #define _FSYSTEM _ABSTRACT(FMOD_SYSTEM)
-#define _FSBANK _ABSTRACT(FMOD_STUDIO_BANK)
 #define _FSEVENTDESCRIPTION _ABSTRACT(FMOD_STUDIO_EVENTDESCRIPTION)
 #define _FSEVENTINSTANCE _ABSTRACT(FMOD_STUDIO_EVENTINSTANCE)
+#define _FSBUS _ABSTRACT(FMOD_STUDIO_BUS)
+#define _FSBANK _ABSTRACT(FMOD_STUDIO_BANK)
 
 IMPORT void hl_sys_print( vbyte *msg );
 static void ReportFmodError( FMOD_RESULT err, int line ) {
@@ -60,6 +61,13 @@ HL_PRIM FMOD_STUDIO_EVENTDESCRIPTION *HL_NAME(studio_system_get_event)(FMOD_STUD
 	return ed;
 }
 
+HL_PRIM FMOD_STUDIO_BUS *HL_NAME(studio_system_get_bus)(FMOD_STUDIO_SYSTEM *system, const char *pathOrId) {
+	FMOD_STUDIO_BUS *bus;
+	FMOD_RESULT res = FMOD_Studio_System_GetBus(system, pathOrId, &bus);
+	CHKERR(res, NULL);
+	return bus;
+}
+
 HL_PRIM float HL_NAME(studio_system_get_parameter_by_name)(FMOD_STUDIO_SYSTEM *system, const char *name) {
 	float finalvalue;
 	FMOD_RESULT res = FMOD_Studio_System_GetParameterByName(system, name, NULL, &finalvalue);
@@ -69,20 +77,20 @@ HL_PRIM float HL_NAME(studio_system_get_parameter_by_name)(FMOD_STUDIO_SYSTEM *s
 
 HL_PRIM bool HL_NAME(studio_system_set_parameter_by_name)(FMOD_STUDIO_SYSTEM *system, const char *name, float value, bool ignoreseekspeed) {
 	FMOD_RESULT res = FMOD_Studio_System_SetParameterByName(system, name, value, ignoreseekspeed);
-	CHKERR(res, true);
-	return false;
+	CHKERR(res, false);
+	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_system_set_parameter_by_name_with_label)(FMOD_STUDIO_SYSTEM *system, const char *name, const char *label, bool ignoreseekspeed) {
 	FMOD_RESULT res = FMOD_Studio_System_SetParameterByNameWithLabel(system, name, label, ignoreseekspeed);
-	CHKERR(res, true);
-	return false;
+	CHKERR(res, false);
+	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_system_set_listener_attributes)(FMOD_STUDIO_SYSTEM *system, int index, FMOD_3D_ATTRIBUTES *attributes, FMOD_VECTOR *attenuationposition) {
 	FMOD_RESULT res = FMOD_Studio_System_SetListenerAttributes(system, index, attributes, attenuationposition);
-	CHKERR(res, true);
-	return false;
+	CHKERR(res, false);
+	return true;
 }
 
 HL_PRIM FMOD_STUDIO_BANK *HL_NAME(studio_system_load_bank_file)(FMOD_STUDIO_SYSTEM *system, const char *filename, int flags) {
@@ -94,14 +102,14 @@ HL_PRIM FMOD_STUDIO_BANK *HL_NAME(studio_system_load_bank_file)(FMOD_STUDIO_SYST
 
 HL_PRIM bool HL_NAME(studio_system_flush_commands)(FMOD_STUDIO_SYSTEM *system) {
 	FMOD_RESULT res = FMOD_Studio_System_FlushCommands(system);
-	CHKERR(res, true);
-	return false;
+	CHKERR(res, false);
+	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_system_flush_sample_loading)(FMOD_STUDIO_SYSTEM *system) {
 	FMOD_RESULT res = FMOD_Studio_System_FlushSampleLoading(system);
-	CHKERR(res, true);
-	return false;
+	CHKERR(res, false);
+	return true;
 }
 
 DEFINE_PRIM(_FSSYSTEM, studio_system_create, _NO_ARG);
@@ -110,6 +118,7 @@ DEFINE_PRIM(_BOOL, studio_system_release, _FSSYSTEM);
 DEFINE_PRIM(_BOOL, studio_system_update, _FSSYSTEM);
 DEFINE_PRIM(_FSYSTEM, studio_system_get_core_system, _FSSYSTEM);
 DEFINE_PRIM(_FSEVENTDESCRIPTION, studio_system_get_event, _FSSYSTEM _BYTES);
+DEFINE_PRIM(_FSBUS, studio_system_get_bus, _FSSYSTEM _BYTES);
 DEFINE_PRIM(_F32, studio_system_get_parameter_by_name, _FSSYSTEM _BYTES);
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name, _FSSYSTEM _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name_with_label, _FSSYSTEM _BYTES _BYTES _BOOL);
@@ -162,8 +171,8 @@ HL_PRIM FMOD_3D_ATTRIBUTES *HL_NAME(studio_eventinstance_get_3d_attributes)(FMOD
 
 HL_PRIM bool HL_NAME(studio_eventinstance_set_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei, FMOD_3D_ATTRIBUTES *attributes) {
 	FMOD_RESULT res = FMOD_Studio_EventInstance_Set3DAttributes(ei, attributes);
-	CHKERR(res, true);
-	return false;
+	CHKERR(res, false);
+	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_eventinstance_start)(FMOD_STUDIO_EVENTINSTANCE *ei) {
@@ -187,14 +196,14 @@ HL_PRIM float HL_NAME(studio_eventinstance_get_parameter_by_name)(FMOD_STUDIO_EV
 
 HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name)(FMOD_STUDIO_EVENTINSTANCE *ei, const char *name, float value, bool ignoreseekspeed) {
 	FMOD_RESULT res = FMOD_Studio_EventInstance_SetParameterByName(ei, name, value, ignoreseekspeed);
-	CHKERR(res, true);
-	return false;
+	CHKERR(res, false);
+	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name_with_label)(FMOD_STUDIO_EVENTINSTANCE *ei, const char *name, const char *label, bool ignoreseekspeed) {
 	FMOD_RESULT res = FMOD_Studio_EventInstance_SetParameterByNameWithLabel(ei, name, label, ignoreseekspeed);
-	CHKERR(res, true);
-	return false;
+	CHKERR(res, false);
+	return true;
 }
 
 DEFINE_PRIM(_STRUCT, studio_eventinstance_get_3d_attributes, _FSEVENTINSTANCE);
@@ -204,6 +213,54 @@ DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
 DEFINE_PRIM(_F32, studio_eventinstance_get_parameter_by_name, _FSEVENTINSTANCE _BYTES);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name_with_label, _FSEVENTINSTANCE _BYTES _BYTES _BOOL);
+
+// ----- FMOD_STUDIO_BUS -----
+
+HL_PRIM float HL_NAME(studio_bus_get_volume)(FMOD_STUDIO_BUS *bus) {
+	float finalvalue;
+	FMOD_RESULT res = FMOD_Studio_Bus_GetVolume(bus, NULL, &finalvalue);
+	CHKERR(res, 0);
+	return finalvalue;
+}
+
+HL_PRIM bool HL_NAME(studio_bus_set_volume)(FMOD_STUDIO_BUS *bus, float volume) {
+	FMOD_RESULT res = FMOD_Studio_Bus_SetVolume(bus, volume);
+	CHKERR(res, false);
+	return true;
+}
+
+HL_PRIM bool HL_NAME(studio_bus_get_paused)(FMOD_STUDIO_BUS *bus) {
+	FMOD_BOOL paused;
+	FMOD_RESULT res = FMOD_Studio_Bus_GetPaused(bus, &paused);
+	CHKERR(res, false);
+	return paused;
+}
+
+HL_PRIM bool HL_NAME(studio_bus_set_paused)(FMOD_STUDIO_BUS *bus, bool paused) {
+	FMOD_RESULT res = FMOD_Studio_Bus_SetPaused(bus, paused);
+	CHKERR(res, false);
+	return true;
+}
+
+HL_PRIM bool HL_NAME(studio_bus_get_mute)(FMOD_STUDIO_BUS *bus) {
+	FMOD_BOOL mute;
+	FMOD_RESULT res = FMOD_Studio_Bus_GetMute(bus, &mute);
+	CHKERR(res, false);
+	return mute;
+}
+
+HL_PRIM bool HL_NAME(studio_bus_set_mute)(FMOD_STUDIO_BUS *bus, bool mute) {
+	FMOD_RESULT res = FMOD_Studio_Bus_SetMute(bus, mute);
+	CHKERR(res, false);
+	return true;
+}
+
+DEFINE_PRIM(_F32, studio_bus_get_volume, _FSBUS);
+DEFINE_PRIM(_BOOL, studio_bus_set_volume, _FSBUS _F32);
+DEFINE_PRIM(_BOOL, studio_bus_get_paused, _FSBUS);
+DEFINE_PRIM(_BOOL, studio_bus_set_paused, _FSBUS _BOOL);
+DEFINE_PRIM(_BOOL, studio_bus_get_mute, _FSBUS);
+DEFINE_PRIM(_BOOL, studio_bus_set_mute, _FSBUS _BOOL);
 
 // ----- FMOD_STUDIO_BANK -----
 

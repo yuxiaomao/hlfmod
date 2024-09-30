@@ -30,16 +30,12 @@ class TestHeaps extends SampleApp {
 		}
 
 		// Control
-		// addSlider("Global vol", function() { return hxd.snd.Manager.get().masterVolume; }, function(v) { hxd.snd.Manager.get().masterVolume = v; });
+		addSlider("Global vol", function() { return fmod.Api.getVolume("bus:/"); }, function(v) { fmod.Api.setVolume("bus:/", v); });
 		addCheck("Beeper", function() { return beeper; }, function(v) { beeper = v; });
 		if ( music != null ) {
-			// addSlider("Music vol", function() { return music.volume; }, function(v) { music.volume = v; });
-			var f = new h2d.Flow(fui);
-			f.horizontalSpacing = 5;
-			var tf = new h2d.Text(getFont(), f);
-			tf.text = "Music pos";
-			tf.maxWidth = 70;
-			tf.textAlign = Right;
+			addCheck("Music mute", function() { return fmod.Api.getMute("bus:/music"); }, function(v) { fmod.Api.setMute("bus:/music", v); });
+			addSlider("Music vol", function() { return fmod.Api.getVolume("bus:/music"); }, function(v) { fmod.Api.setVolume("bus:/music", v); });
+			addSlider("SFX vol", function() { return fmod.Api.getVolume("bus:/gameplay_sfx"); }, function(v) { fmod.Api.setVolume("bus:/gameplay_sfx", v); });
 			addText("SFX Position");
 			addSlider("X", function() { return objPosition.x; }, function(v) { objPosition.x = v; obj.x = v; sfx.setPosition(objPosition);}, -10, 10);
 			addSlider("Y", function() { return objPosition.y; }, function(v) { objPosition.y = v; obj.y = v; sfx.setPosition(objPosition);}, -10, 10);
