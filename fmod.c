@@ -4,7 +4,7 @@
 #include <fmod_studio.h>
 #include <fmod_errors.h>
 
-#define CHKERR(__ret, __default) { if( __ret != FMOD_OK ) { ReportFmodError(__ret,__LINE__); return __default; } }
+#define CHKERR(cmd, __default) { FMOD_RESULT __ret = (cmd); if( __ret != FMOD_OK ) { ReportFmodError(__ret,__LINE__); return __default; } }
 
 #define _FSSYSTEM _ABSTRACT(FMOD_STUDIO_SYSTEM)
 #define _FSYSTEM _ABSTRACT(FMOD_SYSTEM)
@@ -24,91 +24,77 @@ static void ReportFmodError( FMOD_RESULT err, int line ) {
 
 HL_PRIM FMOD_STUDIO_SYSTEM *HL_NAME(studio_system_create)() {
 	FMOD_STUDIO_SYSTEM *system;
-	FMOD_RESULT res = FMOD_Studio_System_Create(&system, FMOD_VERSION);
-	CHKERR(res, NULL);
+	CHKERR(FMOD_Studio_System_Create(&system, FMOD_VERSION), NULL);
 	return system;
 }
 
 HL_PRIM bool HL_NAME(studio_system_initialize)(FMOD_STUDIO_SYSTEM *system, int maxchannels, int studioflags, int coreflags, void *extradriverdata) {
-	FMOD_RESULT res = FMOD_Studio_System_Initialize(system, maxchannels, studioflags, coreflags, extradriverdata);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_System_Initialize(system, maxchannels, studioflags, coreflags, extradriverdata), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_system_release)(FMOD_STUDIO_SYSTEM *system) {
-	FMOD_RESULT res = FMOD_Studio_System_Release(system);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_System_Release(system), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_system_update)(FMOD_STUDIO_SYSTEM *system) {
-	FMOD_RESULT res = FMOD_Studio_System_Update(system);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_System_Update(system), false);
 	return true;
 }
 
 HL_PRIM FMOD_SYSTEM *HL_NAME(studio_system_get_core_system)(FMOD_STUDIO_SYSTEM *system) {
 	FMOD_SYSTEM *core;
-	FMOD_RESULT res = FMOD_Studio_System_GetCoreSystem(system, &core);
-	CHKERR(res, NULL);
+	CHKERR(FMOD_Studio_System_GetCoreSystem(system, &core), NULL);
 	return core;
 }
 
 HL_PRIM FMOD_STUDIO_EVENTDESCRIPTION *HL_NAME(studio_system_get_event)(FMOD_STUDIO_SYSTEM *system, const char *pathOrId) {
 	FMOD_STUDIO_EVENTDESCRIPTION *ed;
-	FMOD_RESULT res = FMOD_Studio_System_GetEvent(system, pathOrId, &ed);
-	CHKERR(res, NULL);
+	CHKERR(FMOD_Studio_System_GetEvent(system, pathOrId, &ed), NULL);
 	return ed;
 }
 
 HL_PRIM FMOD_STUDIO_BUS *HL_NAME(studio_system_get_bus)(FMOD_STUDIO_SYSTEM *system, const char *pathOrId) {
 	FMOD_STUDIO_BUS *bus;
-	FMOD_RESULT res = FMOD_Studio_System_GetBus(system, pathOrId, &bus);
-	CHKERR(res, NULL);
+	CHKERR(FMOD_Studio_System_GetBus(system, pathOrId, &bus), NULL);
 	return bus;
 }
 
 HL_PRIM float HL_NAME(studio_system_get_parameter_by_name)(FMOD_STUDIO_SYSTEM *system, const char *name) {
 	float finalvalue;
-	FMOD_RESULT res = FMOD_Studio_System_GetParameterByName(system, name, NULL, &finalvalue);
-	CHKERR(res, 0);
+	CHKERR(FMOD_Studio_System_GetParameterByName(system, name, NULL, &finalvalue), 0);
 	return finalvalue;
 }
 
 HL_PRIM bool HL_NAME(studio_system_set_parameter_by_name)(FMOD_STUDIO_SYSTEM *system, const char *name, float value, bool ignoreseekspeed) {
-	FMOD_RESULT res = FMOD_Studio_System_SetParameterByName(system, name, value, ignoreseekspeed);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_System_SetParameterByName(system, name, value, ignoreseekspeed), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_system_set_parameter_by_name_with_label)(FMOD_STUDIO_SYSTEM *system, const char *name, const char *label, bool ignoreseekspeed) {
-	FMOD_RESULT res = FMOD_Studio_System_SetParameterByNameWithLabel(system, name, label, ignoreseekspeed);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_System_SetParameterByNameWithLabel(system, name, label, ignoreseekspeed), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_system_set_listener_attributes)(FMOD_STUDIO_SYSTEM *system, int index, FMOD_3D_ATTRIBUTES *attributes, FMOD_VECTOR *attenuationposition) {
-	FMOD_RESULT res = FMOD_Studio_System_SetListenerAttributes(system, index, attributes, attenuationposition);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_System_SetListenerAttributes(system, index, attributes, attenuationposition), false);
 	return true;
 }
 
 HL_PRIM FMOD_STUDIO_BANK *HL_NAME(studio_system_load_bank_file)(FMOD_STUDIO_SYSTEM *system, const char *filename, int flags) {
 	FMOD_STUDIO_BANK *bank;
-	FMOD_RESULT res = FMOD_Studio_System_LoadBankFile(system, filename, flags, &bank);
-	CHKERR(res, NULL);
+	CHKERR(FMOD_Studio_System_LoadBankFile(system, filename, flags, &bank), NULL);
 	return bank;
 }
 
 HL_PRIM bool HL_NAME(studio_system_flush_commands)(FMOD_STUDIO_SYSTEM *system) {
-	FMOD_RESULT res = FMOD_Studio_System_FlushCommands(system);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_System_FlushCommands(system), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_system_flush_sample_loading)(FMOD_STUDIO_SYSTEM *system) {
-	FMOD_RESULT res = FMOD_Studio_System_FlushSampleLoading(system);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_System_FlushSampleLoading(system), false);
 	return true;
 }
 
@@ -131,27 +117,23 @@ DEFINE_PRIM(_BOOL, studio_system_flush_sample_loading, _FSSYSTEM);
 
 HL_PRIM FMOD_STUDIO_EVENTINSTANCE *HL_NAME(studio_eventdescription_create_instance)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
 	FMOD_STUDIO_EVENTINSTANCE *ei;
-	FMOD_RESULT res = FMOD_Studio_EventDescription_CreateInstance(ed, &ei);
-	CHKERR(res, NULL);
+	CHKERR(FMOD_Studio_EventDescription_CreateInstance(ed, &ei), NULL);
 	return ei;
 }
 
 HL_PRIM bool HL_NAME(studio_eventdescription_load_sample_data)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
-	FMOD_RESULT res = FMOD_Studio_EventDescription_LoadSampleData(ed);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_EventDescription_LoadSampleData(ed), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_eventdescription_unload_sample_data)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
-	FMOD_RESULT res = FMOD_Studio_EventDescription_UnloadSampleData(ed);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_EventDescription_UnloadSampleData(ed), false);
 	return true;
 }
 
 HL_PRIM int HL_NAME(studio_eventdescription_get_loading_state)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
 	FMOD_STUDIO_LOADING_STATE state;
-	FMOD_RESULT res = FMOD_Studio_EventDescription_GetSampleLoadingState(ed, &state);
-	CHKERR(res, FMOD_STUDIO_LOADING_STATE_ERROR);
+	CHKERR(FMOD_Studio_EventDescription_GetSampleLoadingState(ed, &state), FMOD_STUDIO_LOADING_STATE_ERROR);
 	return state;
 }
 
@@ -164,45 +146,38 @@ DEFINE_PRIM(_I32, studio_eventdescription_get_loading_state, _FSEVENTDESCRIPTION
 
 HL_PRIM FMOD_3D_ATTRIBUTES *HL_NAME(studio_eventinstance_get_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei) {
 	FMOD_3D_ATTRIBUTES *attributes = {0};
-	FMOD_RESULT res = FMOD_Studio_EventInstance_Get3DAttributes(ei, attributes);
-	CHKERR(res, NULL);
+	CHKERR(FMOD_Studio_EventInstance_Get3DAttributes(ei, attributes), NULL);
 	return attributes;
 }
 
 HL_PRIM bool HL_NAME(studio_eventinstance_set_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei, FMOD_3D_ATTRIBUTES *attributes) {
-	FMOD_RESULT res = FMOD_Studio_EventInstance_Set3DAttributes(ei, attributes);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_EventInstance_Set3DAttributes(ei, attributes), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_eventinstance_start)(FMOD_STUDIO_EVENTINSTANCE *ei) {
-	FMOD_RESULT res = FMOD_Studio_EventInstance_Start(ei);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_EventInstance_Start(ei), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_eventinstance_release)(FMOD_STUDIO_EVENTINSTANCE *ei) {
-	FMOD_RESULT res = FMOD_Studio_EventInstance_Release(ei);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_EventInstance_Release(ei), false);
 	return true;
 }
 
 HL_PRIM float HL_NAME(studio_eventinstance_get_parameter_by_name)(FMOD_STUDIO_EVENTINSTANCE *ei, const char *name) {
 	float finalvalue;
-	FMOD_RESULT res = FMOD_Studio_EventInstance_GetParameterByName(ei, name, NULL, &finalvalue);
-	CHKERR(res, 0);
+	CHKERR(FMOD_Studio_EventInstance_GetParameterByName(ei, name, NULL, &finalvalue), 0);
 	return finalvalue;
 }
 
 HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name)(FMOD_STUDIO_EVENTINSTANCE *ei, const char *name, float value, bool ignoreseekspeed) {
-	FMOD_RESULT res = FMOD_Studio_EventInstance_SetParameterByName(ei, name, value, ignoreseekspeed);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_EventInstance_SetParameterByName(ei, name, value, ignoreseekspeed), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name_with_label)(FMOD_STUDIO_EVENTINSTANCE *ei, const char *name, const char *label, bool ignoreseekspeed) {
-	FMOD_RESULT res = FMOD_Studio_EventInstance_SetParameterByNameWithLabel(ei, name, label, ignoreseekspeed);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_EventInstance_SetParameterByNameWithLabel(ei, name, label, ignoreseekspeed), false);
 	return true;
 }
 
@@ -218,40 +193,34 @@ DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name_with_label, _FSEVE
 
 HL_PRIM float HL_NAME(studio_bus_get_volume)(FMOD_STUDIO_BUS *bus) {
 	float finalvalue;
-	FMOD_RESULT res = FMOD_Studio_Bus_GetVolume(bus, NULL, &finalvalue);
-	CHKERR(res, 0);
+	CHKERR(FMOD_Studio_Bus_GetVolume(bus, NULL, &finalvalue), 0);
 	return finalvalue;
 }
 
 HL_PRIM bool HL_NAME(studio_bus_set_volume)(FMOD_STUDIO_BUS *bus, float volume) {
-	FMOD_RESULT res = FMOD_Studio_Bus_SetVolume(bus, volume);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_Bus_SetVolume(bus, volume), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_bus_get_paused)(FMOD_STUDIO_BUS *bus) {
 	FMOD_BOOL paused;
-	FMOD_RESULT res = FMOD_Studio_Bus_GetPaused(bus, &paused);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_Bus_GetPaused(bus, &paused), false);
 	return paused;
 }
 
 HL_PRIM bool HL_NAME(studio_bus_set_paused)(FMOD_STUDIO_BUS *bus, bool paused) {
-	FMOD_RESULT res = FMOD_Studio_Bus_SetPaused(bus, paused);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_Bus_SetPaused(bus, paused), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_bus_get_mute)(FMOD_STUDIO_BUS *bus) {
 	FMOD_BOOL mute;
-	FMOD_RESULT res = FMOD_Studio_Bus_GetMute(bus, &mute);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_Bus_GetMute(bus, &mute), false);
 	return mute;
 }
 
 HL_PRIM bool HL_NAME(studio_bus_set_mute)(FMOD_STUDIO_BUS *bus, bool mute) {
-	FMOD_RESULT res = FMOD_Studio_Bus_SetMute(bus, mute);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_Bus_SetMute(bus, mute), false);
 	return true;
 }
 
@@ -265,34 +234,29 @@ DEFINE_PRIM(_BOOL, studio_bus_set_mute, _FSBUS _BOOL);
 // ----- FMOD_STUDIO_BANK -----
 
 HL_PRIM bool HL_NAME(studio_bank_unload)(FMOD_STUDIO_BANK *bank) {
-	FMOD_RESULT res = FMOD_Studio_Bank_Unload(bank);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_Bank_Unload(bank), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_bank_load_sample_data)(FMOD_STUDIO_BANK *bank) {
-	FMOD_RESULT res = FMOD_Studio_Bank_LoadSampleData(bank);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_Bank_LoadSampleData(bank), false);
 	return true;
 }
 
 HL_PRIM bool HL_NAME(studio_bank_unload_sample_data)(FMOD_STUDIO_BANK *bank) {
-	FMOD_RESULT res = FMOD_Studio_Bank_UnloadSampleData(bank);
-	CHKERR(res, false);
+	CHKERR(FMOD_Studio_Bank_UnloadSampleData(bank), false);
 	return true;
 }
 
 HL_PRIM int HL_NAME(studio_bank_get_loading_state)(FMOD_STUDIO_BANK *bank) {
 	FMOD_STUDIO_LOADING_STATE state;
-	FMOD_RESULT res = FMOD_Studio_Bank_GetLoadingState(bank, &state);
-	CHKERR(res, FMOD_STUDIO_LOADING_STATE_ERROR);
+	CHKERR(FMOD_Studio_Bank_GetLoadingState(bank, &state), FMOD_STUDIO_LOADING_STATE_ERROR);
 	return state;
 }
 
 HL_PRIM int HL_NAME(studio_bank_get_sample_loading_state)(FMOD_STUDIO_BANK *bank) {
 	FMOD_STUDIO_LOADING_STATE state;
-	FMOD_RESULT res = FMOD_Studio_Bank_GetSampleLoadingState(bank, &state);
-	CHKERR(res, FMOD_STUDIO_LOADING_STATE_ERROR);
+	CHKERR(FMOD_Studio_Bank_GetSampleLoadingState(bank, &state), FMOD_STUDIO_LOADING_STATE_ERROR);
 	return state;
 }
 
