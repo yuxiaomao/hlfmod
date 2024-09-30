@@ -1,5 +1,7 @@
 package fmod;
 
+@:access(fmod.EventDescription)
+@:access(fmod.EventInstance)
 class Event {
 	var desc : Native.EventDescription;
 	var inst : Native.EventInstance;
@@ -30,6 +32,7 @@ class Event {
 	#end
 }
 
+@:access(fmod)
 class Api {
 	static var initialized = false;
 	static var system : Native.System;

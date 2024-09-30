@@ -86,31 +86,31 @@ enum abstract LoadingState(Int) {
 @:hlNative("hlfmod", "studio_system_")
 #end
 abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
-	public static function create() : System { return null; }
-	// public function setAdvancedSettings(...)
-	public function initialize(maxchannels : Int, studioflags : InitFlags, coreflags : CoreInitFlags, extradriverdata : Dynamic) : Bool { return false; }
-	public function release() : Bool { return false; }
-	public function update() : Bool { return false; }
-	public function getCoreSystem() : CoreSystem { return null; }
-	public function getEvent(pathOrId : hl.Bytes) : EventDescription { return null; }
-	public function getBus(pathOrId : hl.Bytes) : Bus { return null; }
-	public function getParameterByName(name : hl.Bytes) : Single { return 0; }
-	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
-	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
-	public function setListenerAttributes(index : Int, attributes : F3DAttributes, attenuationposition : FVector) : Bool { return false; }
-	public function loadBankFile(filename : hl.Bytes, flags : LoadBankFlags) : Bank { return null; }
-	public function flushCommands() : Bool { return false; }
-	public function flushSampleLoading() : Bool { return false; }
+	static function create() : System { return null; }
+	// function setAdvancedSettings(...)
+	function initialize(maxchannels : Int, studioflags : InitFlags, coreflags : CoreInitFlags, extradriverdata : Dynamic) : Bool { return false; }
+	function release() : Bool { return false; }
+	function update() : Bool { return false; }
+	function getCoreSystem() : CoreSystem { return null; }
+	function getEvent(pathOrId : hl.Bytes) : EventDescription { return null; }
+	function getBus(pathOrId : hl.Bytes) : Bus { return null; }
+	function getParameterByName(name : hl.Bytes) : Single { return 0; }
+	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
+	function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
+	function setListenerAttributes(index : Int, attributes : F3DAttributes, attenuationposition : FVector) : Bool { return false; }
+	function loadBankFile(filename : hl.Bytes, flags : LoadBankFlags) : Bank { return null; }
+	function flushCommands() : Bool { return false; }
+	function flushSampleLoading() : Bool { return false; }
 }
 
 #if !disable_sound
 @:hlNative("hlfmod", "studio_eventdescription_")
 #end
 abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
-	public function createInstance() : EventInstance { return null; }
-	public function loadSampleData() : Bool { return false; }
-	public function unloadSampleData() : Bool { return false; }
-	public function getSampleLoadingState() : LoadingState { return ERROR; }
+	function createInstance() : EventInstance { return null; }
+	function loadSampleData() : Bool { return false; }
+	function unloadSampleData() : Bool { return false; }
+	function getSampleLoadingState() : LoadingState { return ERROR; }
 }
 
 #if !disable_sound
@@ -118,37 +118,37 @@ abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 #end
 abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_get_3d_attributes") #end
-	public function get3DAttributes() : F3DAttributes { return null; }
+	function get3DAttributes() : F3DAttributes { return null; }
 	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_set_3d_attributes") #end
-	public function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
-	public function start() : Bool { return false; }
-	public function release() : Bool { return false; }
-	public function getParameterByName(name : hl.Bytes) : Single { return 0; }
-	public function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
-	public function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
+	function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
+	function start() : Bool { return false; }
+	function release() : Bool { return false; }
+	function getParameterByName(name : hl.Bytes) : Single { return 0; }
+	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
+	function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
 }
 
 #if !disable_sound
 @:hlNative("hlfmod", "studio_bus_")
 #end
 abstract Bus(hl.Abstract<"FMOD_STUDIO_BUS">) {
-	public function getVolume() : Single { return 0; }
-	public function setVolume(volume : Single) : Bool { return false; }
-	public function getPaused() : Bool { return false; }
-	public function setPaused(paused : Bool) : Bool { return false; }
-	public function getMute() : Bool { return false; }
-	public function setMute(mute : Bool) : Bool { return false; }
+	function getVolume() : Single { return 0; }
+	function setVolume(volume : Single) : Bool { return false; }
+	function getPaused() : Bool { return false; }
+	function setPaused(paused : Bool) : Bool { return false; }
+	function getMute() : Bool { return false; }
+	function setMute(mute : Bool) : Bool { return false; }
 }
 
 #if !disable_sound
 @:hlNative("hlfmod", "studio_bank_")
 #end
 abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
-	public function unload() : Bool { return false; }
-	public function loadSampleData() : Bool { return false; }
-	public function unloadSampleData() : Bool { return false; }
-	public function getLoadingState() : LoadingState { return ERROR; }
-	public function getSampleLoadingState() : LoadingState { return ERROR; }
+	function unload() : Bool { return false; }
+	function loadSampleData() : Bool { return false; }
+	function unloadSampleData() : Bool { return false; }
+	function getLoadingState() : LoadingState { return ERROR; }
+	function getSampleLoadingState() : LoadingState { return ERROR; }
 }
 
 #if !disable_sound
