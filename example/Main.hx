@@ -1,14 +1,14 @@
 class Main {
 	static function main() {
 		// Init with basic config
-		fmod.Api.init("res/audio", "Master Bank.bank");
-		fmod.Api.loadBank("Master Bank.strings.bank"); // Do not forgot load strings bank
-		fmod.Api.loadBank("music.bank");
-		fmod.Api.loadBank("sfx.bank");
+		fmod.Api.init("res/audio", "Master.bank");
+		fmod.Api.loadBank("Master.strings.bank"); // Do not forgot load strings bank
+		fmod.Api.loadBank("Music.bank");
+		fmod.Api.loadBank("SFX.bank");
 
 		#if !heaps
 		// Try play some music
-		var e = fmod.Api.getEvent("event:/music/remix/01_forsaken_city");
+		var e = fmod.Api.getEvent("event:/Music/Level 02");
 		trace("start playing");
 		e.play();
 		while (true) {

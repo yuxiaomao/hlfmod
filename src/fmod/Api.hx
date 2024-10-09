@@ -6,6 +6,7 @@ class Event {
 	var desc : Native.EventDescription;
 	var inst : Native.EventInstance;
 	var attributes : Native.F3DAttributes;
+	var context : Native.ProgrammerSoundContext;
 
 	public function new(desc : Native.EventDescription) {
 		this.desc = desc;
@@ -15,16 +16,29 @@ class Event {
 		attributes.up = new fmod.Native.FVector(0,1,0);
 	}
 
-	public function play() {
+	public function play(?dialogueKey : String = null) {
+		if (context != null && dialogueKey != null) {
+			context.dialogueKey = @:privateAccess dialogueKey.toUtf8();
+		}
 		inst.start();
 	}
 
 	public function release() {
 		inst.release();
+		context = null;
 	}
 
 	public function setParameter(name : String, value : Float) {
 		inst.setParameterByName(@:privateAccess name.toUtf8(), value, false);
+	}
+
+	public function enableProgrammerSound() {
+		if (context == null) {
+			var system = inst.getSystem();
+			context = new Native.ProgrammerSoundContext(system);
+			inst.setUserData(context);
+			inst.setCallback(CREATE_PROGRAMMER_SOUND | DESTROY_PROGRAMMER_SOUND);
+		}
 	}
 
 	#if heaps
@@ -69,7 +83,8 @@ class Api {
 	public static function loadBank(name : String) {
 		if (!initialized) return;
 		var p = basePath + name;
-		system.loadBankFile(@:privateAccess p.toUtf8(), NORMAL);
+		var bank = system.loadBankFile(@:privateAccess p.toUtf8(), NORMAL);
+		loadedBanks.set(name, bank);
 	}
 
 	public static function unloadBank(name : String) {
@@ -81,16 +96,28 @@ class Api {
 		}
 	}
 
-	static inline function getVCA(vcaName : String) {
-		return system.getVCA(@:privateAccess vcaName.toUtf8());
+	static inline function getBus(name : String) {
+		return system.getBus(@:privateAccess name.toUtf8());
 	}
 
-	public static function getVcaVolume(vcaName : String) {
-		return getVCA(vcaName).getVolume();
+	public static function getBusVolume(name : String) {
+		return getBus(name).getVolume();
 	}
 
-	public static function setVcaVolume(vcaName : String, volume : Float) {
-		getVCA(vcaName).setVolume(volume);
+	public static function setBusVolume(name : String, volume : Float) {
+		getBus(name).setVolume(volume);
+	}
+
+	static inline function getVCA(name : String) {
+		return system.getVCA(@:privateAccess name.toUtf8());
+	}
+
+	public static function getVcaVolume(name : String) {
+		return getVCA(name).getVolume();
+	}
+
+	public static function setVcaVolume(name : String, volume : Float) {
+		getVCA(name).setVolume(volume);
 	}
 
 	public static function getEvent(name : String) : Event {

@@ -116,6 +116,18 @@ enum abstract LoadingState(Int) {
 	}
 }
 
+class ProgrammerSoundContext {
+	public var studioSystem : System;
+	public var coreSystem : CoreSystem;
+	public var dialogueKey : hl.Bytes;
+
+	public function new(system : System) {
+		studioSystem = system;
+		coreSystem = @:privateAccess system.getCoreSystem();
+		dialogueKey = null;
+	}
+}
+
 #if !disable_sound
 @:hlNative("hlfmod", "studio_system_")
 #end
@@ -152,6 +164,7 @@ abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 @:hlNative("hlfmod", "studio_eventinstance_")
 #end
 abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
+	function getSystem() : System { return null; }
 	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_get_3d_attributes") #end
 	function get3DAttributes() : F3DAttributes { return null; }
 	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_set_3d_attributes") #end
@@ -162,6 +175,7 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
 	function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
 	function setCallback(mask : EventCallbackType) : Bool { return false; }
+	function setUserData(userdata : Dynamic) : Bool { return false; }
 }
 
 #if !disable_sound

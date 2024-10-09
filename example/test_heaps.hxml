@@ -1,3 +1,18 @@
-test.hxml
+-cp .
+-cp ../src
+-D hl-ver=1.15.0
+# -lib hlfmod
+-main Main
+# -D dump=pretty
+
+# -- HL/JIT ---
+-hl test.hl
+
+# --- HL/C ---
+# -hl bin/hlout/test.c
+# -D hlgen.makefile=ci
+# -D hlgen.makefilepath=bin
+
+# --- HEAPS ---
 -lib heaps
 -lib hlsdl

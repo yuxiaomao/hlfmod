@@ -152,6 +152,12 @@ DEFINE_PRIM(_I32, studio_eventdescription_get_loading_state, _FSEVENTDESCRIPTION
 
 // ----- FMOD_STUDIO_EVENTINSTANCE -----
 
+HL_PRIM FMOD_STUDIO_SYSTEM *HL_NAME(studio_eventinstance_get_system)(FMOD_STUDIO_EVENTINSTANCE *ei) {
+	FMOD_STUDIO_SYSTEM *system;
+	CHKERR(FMOD_Studio_EventInstance_GetSystem(ei, &system), NULL);
+	return system;
+}
+
 HL_PRIM FMOD_3D_ATTRIBUTES *HL_NAME(studio_eventinstance_get_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei) {
 	FMOD_3D_ATTRIBUTES *attributes = {0};
 	CHKERR(FMOD_Studio_EventInstance_Get3DAttributes(ei, attributes), NULL);
@@ -191,12 +197,14 @@ HL_PRIM bool HL_NAME(studio_eventinstance_set_parameter_by_name_with_label)(FMOD
 
 typedef struct
 {
+	hl_type *t;
 	FMOD_STUDIO_SYSTEM *studioSystem;
 	FMOD_SYSTEM *coreSystem;
-	const char *dialogueString;
-} ProgrammerSoundContext;
+	const char *dialogueKey;
+} fmod_programmer_sound_context;
 
-#define CHKERR_FMOD(op) CHKERR(op, __ret)
+// Used outside of hl thread
+#define CHKERR_FMOD(cmd) { FMOD_RESULT __ret = (cmd); if( __ret != FMOD_OK ) { return __ret; } }
 
 FMOD_RESULT F_CALL programmerSoundCallback(FMOD_STUDIO_EVENT_CALLBACK_TYPE type, FMOD_STUDIO_EVENTINSTANCE* ei, void *parameters)
 {
@@ -205,12 +213,12 @@ FMOD_RESULT F_CALL programmerSoundCallback(FMOD_STUDIO_EVENT_CALLBACK_TYPE type,
 		FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES* props = (FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES*)parameters;
 
 		// Get our context from the event instance user data
-		ProgrammerSoundContext* context = NULL;
+		fmod_programmer_sound_context* context = NULL;
 		CHKERR_FMOD( FMOD_Studio_EventInstance_GetUserData(ei, (void**)&context) );
 
 		// Find the audio file in the audio table with the key
 		FMOD_STUDIO_SOUND_INFO info;
-		CHKERR_FMOD( FMOD_Studio_System_GetSoundInfo(context->studioSystem, context->dialogueString, &info) );
+		CHKERR_FMOD( FMOD_Studio_System_GetSoundInfo(context->studioSystem, context->dialogueKey, &info) );
 
 		FMOD_SOUND* sound = NULL;
 		CHKERR_FMOD( FMOD_System_CreateSound(context->coreSystem, info.name_or_data, FMOD_LOOP_NORMAL | FMOD_CREATECOMPRESSEDSAMPLE | FMOD_NONBLOCKING | info.mode, &info.exinfo, &sound) );
@@ -237,6 +245,12 @@ HL_PRIM bool HL_NAME(studio_eventinstance_set_callback)(FMOD_STUDIO_EVENTINSTANC
 	return true;
 }
 
+HL_PRIM bool HL_NAME(studio_eventinstance_set_user_data)(FMOD_STUDIO_EVENTINSTANCE *ei, void *userdata) {
+	CHKERR(FMOD_Studio_EventInstance_SetUserData(ei, userdata), false);
+	return true;
+}
+
+DEFINE_PRIM(_FSSYSTEM, studio_eventinstance_get_system, _FSEVENTINSTANCE);
 DEFINE_PRIM(_STRUCT, studio_eventinstance_get_3d_attributes, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);
 DEFINE_PRIM(_BOOL, studio_eventinstance_start, _FSEVENTINSTANCE);
@@ -245,6 +259,7 @@ DEFINE_PRIM(_F32, studio_eventinstance_get_parameter_by_name, _FSEVENTINSTANCE _
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name_with_label, _FSEVENTINSTANCE _BYTES _BYTES _BOOL);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_callback, _FSEVENTINSTANCE _I32);
+DEFINE_PRIM(_BOOL, studio_eventinstance_set_user_data, _FSEVENTINSTANCE _DYN);
 
 // ----- FMOD_STUDIO_BUS -----
 
