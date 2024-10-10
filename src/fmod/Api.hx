@@ -28,8 +28,16 @@ class Event {
 		context = null;
 	}
 
+	public function getParameter(name : String) {
+		return inst.getParameterByName(@:privateAccess name.toUtf8());
+	}
+
 	public function setParameter(name : String, value : Float) {
 		inst.setParameterByName(@:privateAccess name.toUtf8(), value, false);
+	}
+
+	public function setParameterWithLabel(name : String, value : String) {
+		inst.setParameterByNameWithLabel(@:privateAccess name.toUtf8(), @:privateAccess value.toUtf8(), false);
 	}
 
 	public function enableProgrammerSound() {

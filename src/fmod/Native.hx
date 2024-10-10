@@ -129,7 +129,7 @@ class ProgrammerSoundContext {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "studio_system_")
+@:hlNative("?hlfmod", "studio_system_")
 #end
 abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	static function create() : System { return null; }
@@ -151,7 +151,7 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "studio_eventdescription_")
+@:hlNative("?hlfmod", "studio_eventdescription_")
 #end
 abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 	function createInstance() : EventInstance { return null; }
@@ -161,13 +161,13 @@ abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "studio_eventinstance_")
+@:hlNative("?hlfmod", "studio_eventinstance_")
 #end
 abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	function getSystem() : System { return null; }
-	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_get_3d_attributes") #end
+	#if !disable_sound @:hlNative("?hlfmod", "studio_eventinstance_get_3d_attributes") #end
 	function get3DAttributes() : F3DAttributes { return null; }
-	#if !disable_sound @:hlNative("hlfmod", "studio_eventinstance_set_3d_attributes") #end
+	#if !disable_sound @:hlNative("?hlfmod", "studio_eventinstance_set_3d_attributes") #end
 	function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
 	function start() : Bool { return false; }
 	function release() : Bool { return false; }
@@ -179,7 +179,7 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "studio_bus_")
+@:hlNative("?hlfmod", "studio_bus_")
 #end
 abstract Bus(hl.Abstract<"FMOD_STUDIO_BUS">) {
 	function getVolume() : Single { return 0; }
@@ -191,7 +191,7 @@ abstract Bus(hl.Abstract<"FMOD_STUDIO_BUS">) {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "studio_vca_")
+@:hlNative("?hlfmod", "studio_vca_")
 #end
 abstract Vca(hl.Abstract<"FMOD_STUDIO_VCA">) {
 	function getVolume() : Single { return 0; }
@@ -199,7 +199,7 @@ abstract Vca(hl.Abstract<"FMOD_STUDIO_VCA">) {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "studio_bank_")
+@:hlNative("?hlfmod", "studio_bank_")
 #end
 abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
 	function unload() : Bool { return false; }
@@ -210,7 +210,7 @@ abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
 }
 
 #if !disable_sound
-@:hlNative("hlfmod", "core_system_")
+@:hlNative("?hlfmod", "core_system_")
 #end
 abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
 	// public function setSoftwareFormat(...)
