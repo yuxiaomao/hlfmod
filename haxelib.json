@@ -1,0 +1,10 @@
+{
+	"name": "hlfmod",
+	"url" : "https://github.com/yuxiaomao/hlfmod.git",
+	"license": "MIT",
+	"description": "Hashlink FMOD support",
+	"contributors": ["yuxiaomao"],
+	"version": "1.0.0",
+	"classPath": "src/",
+	"releasenote": ""
+}
