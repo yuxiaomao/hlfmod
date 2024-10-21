@@ -62,7 +62,7 @@ HL_PRIM FMOD_STUDIO_BUS *HL_NAME(studio_system_get_bus)(FMOD_STUDIO_SYSTEM *syst
 	return bus;
 }
 
-HL_PRIM FMOD_STUDIO_BUS *HL_NAME(studio_system_get_vca)(FMOD_STUDIO_SYSTEM *system, const char *pathOrId) {
+HL_PRIM FMOD_STUDIO_VCA *HL_NAME(studio_system_get_vca)(FMOD_STUDIO_SYSTEM *system, const char *pathOrId) {
 	FMOD_STUDIO_VCA *vca;
 	CHKERR(FMOD_Studio_System_GetVCA(system, pathOrId, &vca), NULL);
 	return vca;
@@ -123,6 +123,12 @@ DEFINE_PRIM(_BOOL, studio_system_flush_sample_loading, _FSSYSTEM);
 
 // ----- FMOD_STUDIO_EVENTDESCRIPTION -----
 
+HL_PRIM int HL_NAME(studio_eventdescription_get_length)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	int length = 0;
+	CHKERR(FMOD_Studio_EventDescription_GetLength(ed, &length), 0);
+	return length;
+}
+
 HL_PRIM FMOD_STUDIO_EVENTINSTANCE *HL_NAME(studio_eventdescription_create_instance)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
 	FMOD_STUDIO_EVENTINSTANCE *ei;
 	CHKERR(FMOD_Studio_EventDescription_CreateInstance(ed, &ei), NULL);
@@ -145,6 +151,7 @@ HL_PRIM int HL_NAME(studio_eventdescription_get_loading_state)(FMOD_STUDIO_EVENT
 	return state;
 }
 
+DEFINE_PRIM(_I32, studio_eventdescription_get_length, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_FSEVENTINSTANCE, studio_eventdescription_create_instance, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_BOOL, studio_eventdescription_load_sample_data, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_BOOL, studio_eventdescription_unload_sample_data, _FSEVENTDESCRIPTION);
@@ -171,6 +178,17 @@ HL_PRIM bool HL_NAME(studio_eventinstance_set_3d_attributes)(FMOD_STUDIO_EVENTIN
 
 HL_PRIM bool HL_NAME(studio_eventinstance_start)(FMOD_STUDIO_EVENTINSTANCE *ei) {
 	CHKERR(FMOD_Studio_EventInstance_Start(ei), false);
+	return true;
+}
+
+HL_PRIM int HL_NAME(studio_eventinstance_get_timeline_position)(FMOD_STUDIO_EVENTINSTANCE *ei) {
+	int position = 0;
+	CHKERR(FMOD_Studio_EventInstance_GetTimelinePosition(ei, &position), 0);
+	return position;
+}
+
+HL_PRIM bool HL_NAME(studio_eventinstance_set_timeline_position)(FMOD_STUDIO_EVENTINSTANCE *ei, int position) {
+	CHKERR(FMOD_Studio_EventInstance_SetTimelinePosition(ei, position), false);
 	return true;
 }
 
@@ -254,6 +272,8 @@ DEFINE_PRIM(_FSSYSTEM, studio_eventinstance_get_system, _FSEVENTINSTANCE);
 DEFINE_PRIM(_STRUCT, studio_eventinstance_get_3d_attributes, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);
 DEFINE_PRIM(_BOOL, studio_eventinstance_start, _FSEVENTINSTANCE);
+DEFINE_PRIM(_I32, studio_eventinstance_get_timeline_position, _FSEVENTINSTANCE);
+DEFINE_PRIM(_BOOL, studio_eventinstance_set_timeline_position, _FSEVENTINSTANCE _I32);
 DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
 DEFINE_PRIM(_F32, studio_eventinstance_get_parameter_by_name, _FSEVENTINSTANCE _BYTES);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);

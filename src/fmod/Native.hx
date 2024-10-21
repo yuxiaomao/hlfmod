@@ -154,6 +154,7 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 @:hlNative("?hlfmod", "studio_eventdescription_")
 #end
 abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
+	function getLength() : Int { return 0; }
 	function createInstance() : EventInstance { return null; }
 	function loadSampleData() : Bool { return false; }
 	function unloadSampleData() : Bool { return false; }
@@ -170,6 +171,8 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	#if !disable_sound @:hlNative("?hlfmod", "studio_eventinstance_set_3d_attributes") #end
 	function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
 	function start() : Bool { return false; }
+	function getTimelinePosition() : Int { return 0; }
+	function setTimelinePosition(position : Int) : Bool { return false; }
 	function release() : Bool { return false; }
 	function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }

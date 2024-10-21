@@ -10,6 +10,9 @@ class TestHeaps extends SampleApp {
 	var obj : h3d.scene.Mesh;
 	var objPosition : h3d.Vector;
 
+	var slider : h2d.Slider;
+	var musicPosition : h2d.Text;
+
 	override function init() {
 		super.init();
 
@@ -31,6 +34,21 @@ class TestHeaps extends SampleApp {
 			trace("Playing "+music);
 			music.play();
 		}
+
+		// Timeline
+		var f = new h2d.Flow(fui);
+		slider = new h2d.Slider(300, 10, f);
+		slider.onChange = function() {
+			music.setTimelinePosition(Std.int(slider.value * music.getLength()));
+		};
+		musicPosition = new h2d.Text(getFont(), f);
+		slider.x = 150;
+		slider.y = 80;
+		if( music == null ) slider.remove();
+		slider.onChange = function() {
+			music.setTimelinePosition(Std.int(slider.value * music.getLength()));
+		};
+		musicPosition.setPosition(460, 80);
 
 		// Control
 		addSlider("Music vol", function() { return fmod.Api.getBusVolume("bus:/Music"); }, function(v) { fmod.Api.setBusVolume("bus:/Music", v); });
@@ -66,6 +84,12 @@ class TestHeaps extends SampleApp {
 				engine.backgroundColor = 0xFFFF0000;
 			} else
 				engine.backgroundColor = 0;
+		}
+		if ( music != null ) {
+			var position = music.getTimelinePosition();
+			var duration = music.getLength();
+			slider.value = position / duration;
+			musicPosition.text = hxd.Math.fmt(position) + "/" + hxd.Math.fmt(duration);
 		}
 	}
 

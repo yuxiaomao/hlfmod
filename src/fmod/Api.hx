@@ -28,6 +28,18 @@ class Event {
 		context = null;
 	}
 
+	public function getLength() {
+		return desc.getLength();
+	}
+
+	public function getTimelinePosition() {
+		return inst.getTimelinePosition();
+	}
+
+	public function setTimelinePosition(position : Int) {
+		inst.setTimelinePosition(position);
+	}
+
 	public function getParameter(name : String) {
 		return inst.getParameterByName(@:privateAccess name.toUtf8());
 	}
