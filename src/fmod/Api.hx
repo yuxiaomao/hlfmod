@@ -24,7 +24,10 @@ class Event {
 	}
 
 	public function release() {
-		inst.release();
+		if (inst != null) {
+			inst.release();
+			inst = null;
+		}
 		context = null;
 	}
 
@@ -78,6 +81,10 @@ class Event {
 
 @:access(fmod)
 class Api {
+
+	public static var DEFAULT_INIT_FLAGS : Native.InitFlags = NORMAL;
+	public static var DEFAULT_CORE_INIT_FLAGS : Native.CoreInitFlags = NORMAL;
+
 	static var initialized = false;
 	static var system : Native.System;
 	static var basePath : String;
@@ -86,7 +93,7 @@ class Api {
 	public static function init(path : String, masterBank : String) {
 		system = Native.System.create();
 		// set additional config here
-		system.initialize(32, NORMAL, NORMAL, null);
+		system.initialize(32, DEFAULT_INIT_FLAGS, DEFAULT_CORE_INIT_FLAGS, null);
 		basePath = path + "/";
 		loadedBanks = [];
 		initialized = true;
