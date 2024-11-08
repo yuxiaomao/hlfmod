@@ -28,6 +28,13 @@ class Event {
 		context = null;
 	}
 
+	public function getPath() {
+		var len = desc.getPath(null, 0);
+		var path = new hl.Bytes(len);
+		desc.getPath(path, len);
+		return @:privateAccess String.fromUTF8(path);
+	}
+
 	public function getLength() {
 		return desc.getLength();
 	}
@@ -114,6 +121,17 @@ class Api {
 			bank.unload();
 			loadedBanks.remove(name);
 		}
+	}
+
+	public static function getBankEventList(name : String) : Array<Event> {
+		if (!initialized) return null;
+		var bank = loadedBanks.get(name);
+		if (bank == null)
+			return null;
+		var count = bank.getEventCount();
+		var arr = new hl.NativeArray(count);
+		bank.getEventList(arr);
+		return [for (ed in arr) new Event(ed)];
 	}
 
 	static inline function getBus(name : String) {

@@ -51,6 +51,20 @@ enum abstract LoadingState(Int) {
 	var ERROR;
 }
 
+enum abstract PlaybackState(Int) {
+	var ERROR = -1;
+	var PLAYING = 0;
+	var SUSTAINING;
+	var STOPPED;
+	var STARTING;
+	var STOPPING;
+}
+
+enum abstract StopMode(Int) {
+	var ALLOWFADEOUT;
+	var IMMEDIATE;
+}
+
 @:struct class FVectorImpl {
 	public var x : Single;
 	public var y : Single;
@@ -148,13 +162,22 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	function loadBankFile(filename : hl.Bytes, flags : LoadBankFlags) : Bank { return null; }
 	function flushCommands() : Bool { return false; }
 	function flushSampleLoading() : Bool { return false; }
+	function getCpuUsage() : Single { return 0; }
 }
 
 #if !disable_sound
 @:hlNative("?hlfmod", "studio_eventdescription_")
 #end
 abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
+	function isValid() : Bool { return false; }
+	function getPath(path : hl.Bytes, size : Int) : Int { return 0; }
 	function getLength() : Int { return 0; }
+	function getSoundSize() : Single { return 0; }
+	function isSnapshot() : Bool { return false; }
+	function isOneshot() : Bool { return false; }
+	function isStream() : Bool { return false; }
+	function is3d() : Bool { return false; }
+	function isDopplerEnabled() : Bool { return false; }
 	function createInstance() : EventInstance { return null; }
 	function loadSampleData() : Bool { return false; }
 	function unloadSampleData() : Bool { return false; }
@@ -165,14 +188,17 @@ abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 @:hlNative("?hlfmod", "studio_eventinstance_")
 #end
 abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
+	function isValid() : Bool { return false; }
 	function getSystem() : System { return null; }
 	#if !disable_sound @:hlNative("?hlfmod", "studio_eventinstance_get_3d_attributes") #end
 	function get3DAttributes() : F3DAttributes { return null; }
 	#if !disable_sound @:hlNative("?hlfmod", "studio_eventinstance_set_3d_attributes") #end
 	function set3DAttributes(attributes : F3DAttributes) : Bool { return false; }
 	function start() : Bool { return false; }
+	function stop(mode : StopMode) : Bool { return false; }
 	function getTimelinePosition() : Int { return 0; }
 	function setTimelinePosition(position : Int) : Bool { return false; }
+	function getPlaybackState() : PlaybackState { return ERROR; }
 	function release() : Bool { return false; }
 	function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
@@ -185,6 +211,7 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 @:hlNative("?hlfmod", "studio_bus_")
 #end
 abstract Bus(hl.Abstract<"FMOD_STUDIO_BUS">) {
+	function isValid() : Bool { return false; }
 	function getVolume() : Single { return 0; }
 	function setVolume(volume : Single) : Bool { return false; }
 	function getPaused() : Bool { return false; }
@@ -197,6 +224,7 @@ abstract Bus(hl.Abstract<"FMOD_STUDIO_BUS">) {
 @:hlNative("?hlfmod", "studio_vca_")
 #end
 abstract Vca(hl.Abstract<"FMOD_STUDIO_VCA">) {
+	function isValid() : Bool { return false; }
 	function getVolume() : Single { return 0; }
 	function setVolume(volume : Single) : Bool { return false; }
 }
@@ -205,11 +233,14 @@ abstract Vca(hl.Abstract<"FMOD_STUDIO_VCA">) {
 @:hlNative("?hlfmod", "studio_bank_")
 #end
 abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
+	function isValid() : Bool { return false; }
 	function unload() : Bool { return false; }
 	function loadSampleData() : Bool { return false; }
 	function unloadSampleData() : Bool { return false; }
 	function getLoadingState() : LoadingState { return ERROR; }
 	function getSampleLoadingState() : LoadingState { return ERROR; }
+	function getEventCount() : Int { return 0; }
+	function getEventList(arr : hl.NativeArray<EventDescription>) : Int { return 0; }
 }
 
 #if !disable_sound

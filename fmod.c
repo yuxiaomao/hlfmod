@@ -105,6 +105,12 @@ HL_PRIM bool HL_NAME(studio_system_flush_sample_loading)(FMOD_STUDIO_SYSTEM *sys
 	return true;
 }
 
+HL_PRIM float HL_NAME(studio_system_get_cpu_usage)(FMOD_STUDIO_SYSTEM *system) {
+	FMOD_STUDIO_CPU_USAGE usage;
+	CHKERR(FMOD_Studio_System_GetCPUUsage(system, &usage, NULL), 0);
+	return usage.update;
+}
+
 DEFINE_PRIM(_FSSYSTEM, studio_system_create, _NO_ARG);
 DEFINE_PRIM(_BOOL, studio_system_initialize, _FSSYSTEM _I32 _I32 _I32 _DYN);
 DEFINE_PRIM(_BOOL, studio_system_release, _FSSYSTEM);
@@ -120,13 +126,72 @@ DEFINE_PRIM(_BOOL, studio_system_set_listener_attributes, _FSSYSTEM _I32 _STRUCT
 DEFINE_PRIM(_FSBANK, studio_system_load_bank_file, _FSSYSTEM _BYTES _I32);
 DEFINE_PRIM(_BOOL, studio_system_flush_commands, _FSSYSTEM);
 DEFINE_PRIM(_BOOL, studio_system_flush_sample_loading, _FSSYSTEM);
+DEFINE_PRIM(_F32, studio_system_get_cpu_usage, _FSSYSTEM);
 
 // ----- FMOD_STUDIO_EVENTDESCRIPTION -----
+
+HL_PRIM bool HL_NAME(studio_eventdescription_is_valid)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	return FMOD_Studio_EventDescription_IsValid(ed);
+}
+
+HL_PRIM int HL_NAME(studio_eventdescription_get_path)(FMOD_STUDIO_EVENTDESCRIPTION *ed, char *path, int size) {
+	int retrieved = 0;
+	CHKERR(FMOD_Studio_EventDescription_GetPath(ed, path, size, &retrieved), 0);
+	return retrieved;
+}
 
 HL_PRIM int HL_NAME(studio_eventdescription_get_length)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
 	int length = 0;
 	CHKERR(FMOD_Studio_EventDescription_GetLength(ed, &length), 0);
 	return length;
+}
+
+HL_PRIM float HL_NAME(studio_eventdescription_get_min_distance)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	float mind, maxd;
+	CHKERR(FMOD_Studio_EventDescription_GetMinMaxDistance(ed, &mind, &maxd), 0);
+	return mind;
+}
+
+HL_PRIM float HL_NAME(studio_eventdescription_get_max_distance)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	float mind, maxd;
+	CHKERR(FMOD_Studio_EventDescription_GetMinMaxDistance(ed, &mind, &maxd), 0);
+	return maxd;
+}
+
+HL_PRIM float HL_NAME(studio_eventdescription_get_sound_size)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	float size;
+	CHKERR(FMOD_Studio_EventDescription_GetSoundSize(ed, &size), 0);
+	return size;
+}
+
+HL_PRIM bool HL_NAME(studio_eventdescription_is_snapshot)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	bool b = false;
+	CHKERR(FMOD_Studio_EventDescription_IsSnapshot(ed, &b), false);
+	return b;
+}
+
+HL_PRIM bool HL_NAME(studio_eventdescription_is_oneshot)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	bool b = false;
+	CHKERR(FMOD_Studio_EventDescription_IsOneshot(ed, &b), false);
+	return b;
+}
+
+HL_PRIM bool HL_NAME(studio_eventdescription_is_stream)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	bool b = false;
+	CHKERR(FMOD_Studio_EventDescription_IsStream(ed, &b), false);
+	return b;
+}
+
+HL_PRIM bool HL_NAME(studio_eventdescription_is3d)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	bool b = false;
+	CHKERR(FMOD_Studio_EventDescription_Is3D(ed, &b), false);
+	return b;
+}
+
+HL_PRIM bool HL_NAME(studio_eventdescription_is_doppler_enabled)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	bool b = false;
+	CHKERR(FMOD_Studio_EventDescription_IsDopplerEnabled(ed, &b), false);
+	return b;
 }
 
 HL_PRIM FMOD_STUDIO_EVENTINSTANCE *HL_NAME(studio_eventdescription_create_instance)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
@@ -151,13 +216,27 @@ HL_PRIM int HL_NAME(studio_eventdescription_get_loading_state)(FMOD_STUDIO_EVENT
 	return state;
 }
 
+DEFINE_PRIM(_BOOL, studio_eventdescription_is_valid, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_I32, studio_eventdescription_get_path, _FSEVENTDESCRIPTION _BYTES _I32);
 DEFINE_PRIM(_I32, studio_eventdescription_get_length, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_F32, studio_eventdescription_get_min_distance, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_F32, studio_eventdescription_get_max_distance, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_F32, studio_eventdescription_get_sound_size, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_BOOL, studio_eventdescription_is_snapshot, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_BOOL, studio_eventdescription_is_oneshot, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_BOOL, studio_eventdescription_is_stream, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_BOOL, studio_eventdescription_is3d, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_BOOL, studio_eventdescription_is_doppler_enabled, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_FSEVENTINSTANCE, studio_eventdescription_create_instance, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_BOOL, studio_eventdescription_load_sample_data, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_BOOL, studio_eventdescription_unload_sample_data, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_I32, studio_eventdescription_get_loading_state, _FSEVENTDESCRIPTION);
 
 // ----- FMOD_STUDIO_EVENTINSTANCE -----
+
+HL_PRIM bool HL_NAME(studio_eventinstance_is_valid)(FMOD_STUDIO_EVENTINSTANCE *ei) {
+	return FMOD_Studio_EventInstance_IsValid(ei);
+}
 
 HL_PRIM FMOD_STUDIO_SYSTEM *HL_NAME(studio_eventinstance_get_system)(FMOD_STUDIO_EVENTINSTANCE *ei) {
 	FMOD_STUDIO_SYSTEM *system;
@@ -181,6 +260,11 @@ HL_PRIM bool HL_NAME(studio_eventinstance_start)(FMOD_STUDIO_EVENTINSTANCE *ei) 
 	return true;
 }
 
+HL_PRIM bool HL_NAME(studio_eventinstance_stop)(FMOD_STUDIO_EVENTINSTANCE *ei, int mode) {
+	CHKERR(FMOD_Studio_EventInstance_Stop(ei, mode), false);
+	return true;
+}
+
 HL_PRIM int HL_NAME(studio_eventinstance_get_timeline_position)(FMOD_STUDIO_EVENTINSTANCE *ei) {
 	int position = 0;
 	CHKERR(FMOD_Studio_EventInstance_GetTimelinePosition(ei, &position), 0);
@@ -190,6 +274,12 @@ HL_PRIM int HL_NAME(studio_eventinstance_get_timeline_position)(FMOD_STUDIO_EVEN
 HL_PRIM bool HL_NAME(studio_eventinstance_set_timeline_position)(FMOD_STUDIO_EVENTINSTANCE *ei, int position) {
 	CHKERR(FMOD_Studio_EventInstance_SetTimelinePosition(ei, position), false);
 	return true;
+}
+
+HL_PRIM int HL_NAME(studio_eventinstance_get_playback_state)(FMOD_STUDIO_EVENTINSTANCE *ei) {
+	FMOD_STUDIO_PLAYBACK_STATE state;
+	CHKERR(FMOD_Studio_EventInstance_GetPlaybackState(ei, &state), -1);
+	return state;
 }
 
 HL_PRIM bool HL_NAME(studio_eventinstance_release)(FMOD_STUDIO_EVENTINSTANCE *ei) {
@@ -268,12 +358,15 @@ HL_PRIM bool HL_NAME(studio_eventinstance_set_user_data)(FMOD_STUDIO_EVENTINSTAN
 	return true;
 }
 
+DEFINE_PRIM(_BOOL, studio_eventinstance_is_valid, _FSEVENTINSTANCE);
 DEFINE_PRIM(_FSSYSTEM, studio_eventinstance_get_system, _FSEVENTINSTANCE);
 DEFINE_PRIM(_STRUCT, studio_eventinstance_get_3d_attributes, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_3d_attributes, _FSEVENTINSTANCE _STRUCT);
 DEFINE_PRIM(_BOOL, studio_eventinstance_start, _FSEVENTINSTANCE);
+DEFINE_PRIM(_BOOL, studio_eventinstance_stop, _FSEVENTINSTANCE _I32);
 DEFINE_PRIM(_I32, studio_eventinstance_get_timeline_position, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_timeline_position, _FSEVENTINSTANCE _I32);
+DEFINE_PRIM(_I32, studio_eventinstance_get_playback_state, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
 DEFINE_PRIM(_F32, studio_eventinstance_get_parameter_by_name, _FSEVENTINSTANCE _BYTES);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
@@ -282,6 +375,10 @@ DEFINE_PRIM(_BOOL, studio_eventinstance_set_callback, _FSEVENTINSTANCE _I32);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_user_data, _FSEVENTINSTANCE _DYN);
 
 // ----- FMOD_STUDIO_BUS -----
+
+HL_PRIM bool HL_NAME(studio_bus_is_valid)(FMOD_STUDIO_BUS *bus) {
+	return FMOD_Studio_Bus_IsValid(bus);
+}
 
 HL_PRIM float HL_NAME(studio_bus_get_volume)(FMOD_STUDIO_BUS *bus) {
 	float finalvalue;
@@ -316,6 +413,7 @@ HL_PRIM bool HL_NAME(studio_bus_set_mute)(FMOD_STUDIO_BUS *bus, bool mute) {
 	return true;
 }
 
+DEFINE_PRIM(_BOOL, studio_bus_is_valid, _FSBUS);
 DEFINE_PRIM(_F32, studio_bus_get_volume, _FSBUS);
 DEFINE_PRIM(_BOOL, studio_bus_set_volume, _FSBUS _F32);
 DEFINE_PRIM(_BOOL, studio_bus_get_paused, _FSBUS);
@@ -323,7 +421,11 @@ DEFINE_PRIM(_BOOL, studio_bus_set_paused, _FSBUS _BOOL);
 DEFINE_PRIM(_BOOL, studio_bus_get_mute, _FSBUS);
 DEFINE_PRIM(_BOOL, studio_bus_set_mute, _FSBUS _BOOL);
 
-// ----- FMOD_STUDIO_BUS -----
+// ----- FMOD_STUDIO_VCA -----
+
+HL_PRIM bool HL_NAME(studio_vca_is_valid)(FMOD_STUDIO_VCA *vca) {
+	return FMOD_Studio_VCA_IsValid(vca);
+}
 
 HL_PRIM float HL_NAME(studio_vca_get_volume)(FMOD_STUDIO_VCA *vca) {
 	float finalvalue;
@@ -336,10 +438,15 @@ HL_PRIM bool HL_NAME(studio_vca_set_volume)(FMOD_STUDIO_VCA *vca, float volume) 
 	return true;
 }
 
+DEFINE_PRIM(_BOOL, studio_vca_is_valid, _FSVCA);
 DEFINE_PRIM(_F32, studio_vca_get_volume, _FSVCA);
 DEFINE_PRIM(_BOOL, studio_vca_set_volume, _FSVCA _F32);
 
 // ----- FMOD_STUDIO_BANK -----
+
+HL_PRIM bool HL_NAME(studio_bank_is_valid)(FMOD_STUDIO_BANK *bank) {
+	return FMOD_Studio_Bank_IsValid(bank);
+}
 
 HL_PRIM bool HL_NAME(studio_bank_unload)(FMOD_STUDIO_BANK *bank) {
 	CHKERR(FMOD_Studio_Bank_Unload(bank), false);
@@ -368,8 +475,29 @@ HL_PRIM int HL_NAME(studio_bank_get_sample_loading_state)(FMOD_STUDIO_BANK *bank
 	return state;
 }
 
+HL_PRIM int HL_NAME(studio_bank_get_event_count)(FMOD_STUDIO_BANK *bank) {
+	int count;
+	CHKERR(FMOD_Studio_Bank_GetEventCount(bank, &count), 0);
+	return count;
+}
+
+HL_PRIM int HL_NAME(studio_bank_get_event_list)(FMOD_STUDIO_BANK *bank, varray *arr) {
+	int capacity = arr->size;
+	int count = 0;
+	FMOD_STUDIO_EVENTDESCRIPTION **arr1 = malloc(sizeof(FMOD_STUDIO_EVENTDESCRIPTION *) * capacity);
+	CHKERR(FMOD_Studio_Bank_GetEventList(bank, arr1, capacity, &count), 0);
+	for( int i = 0; i < count; i++ ) {
+		hl_aptr(arr, FMOD_STUDIO_EVENTDESCRIPTION *)[i] = arr1[i];
+	}
+	free(arr1);
+	return count;
+}
+
+DEFINE_PRIM(_BOOL, studio_bank_is_valid, _FSBANK);
 DEFINE_PRIM(_BOOL, studio_bank_unload, _FSBANK);
 DEFINE_PRIM(_BOOL, studio_bank_load_sample_data, _FSBANK);
 DEFINE_PRIM(_BOOL, studio_bank_unload_sample_data, _FSBANK);
 DEFINE_PRIM(_I32, studio_bank_get_loading_state, _FSBANK);
 DEFINE_PRIM(_I32, studio_bank_get_sample_loading_state, _FSBANK);
+DEFINE_PRIM(_I32, studio_bank_get_event_count, _FSBANK);
+DEFINE_PRIM(_I32, studio_bank_get_event_list, _FSBANK _ARR);

@@ -6,6 +6,12 @@ class Main {
 		fmod.Api.loadBank("Music.bank");
 		fmod.Api.loadBank("SFX.bank");
 
+		// Display event list in a loaded bank
+		var list = fmod.Api.getBankEventList("Music.bank");
+		for (e in list) {
+			trace(e.getPath());
+		}
+
 		#if !heaps
 		// Try play some music
 		var e = fmod.Api.getEvent("event:/Music/Level 02");
