@@ -38,6 +38,16 @@ class Event {
 		return @:privateAccess String.fromUTF8(path);
 	}
 
+	public function hasParameter(name : String) : Bool {
+		var count = desc.getParameterDescriptionCount();
+		for (i in 0...count) {
+			var pname = @:privateAccess String.fromUTF8(desc.getParameterDescriptionNameByIndex(i));
+			if (name == pname)
+				return true;
+		}
+		return false;
+	}
+
 	public function getLength() {
 		return desc.getLength();
 	}

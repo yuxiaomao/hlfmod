@@ -171,6 +171,8 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 	function isValid() : Bool { return false; }
 	function getPath(path : hl.Bytes, size : Int) : Int { return 0; }
+	function getParameterDescriptionCount() : Int { return 0; }
+	function getParameterDescriptionNameByIndex(index : Int) : hl.Bytes { return null; }
 	function getLength() : Int { return 0; }
 	function getSoundSize() : Single { return 0; }
 	function isSnapshot() : Bool { return false; }

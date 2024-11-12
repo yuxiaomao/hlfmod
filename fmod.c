@@ -140,6 +140,18 @@ HL_PRIM int HL_NAME(studio_eventdescription_get_path)(FMOD_STUDIO_EVENTDESCRIPTI
 	return retrieved;
 }
 
+HL_PRIM int HL_NAME(studio_eventdescription_get_parameter_description_count)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+	int count = 0;
+	CHKERR(FMOD_Studio_EventDescription_GetParameterDescriptionCount(ed, &count), 0);
+	return count;
+}
+
+HL_PRIM char *HL_NAME(studio_eventdescription_get_parameter_description_name_by_index)(FMOD_STUDIO_EVENTDESCRIPTION *ed, int index) {
+	FMOD_STUDIO_PARAMETER_DESCRIPTION parameter;
+	CHKERR(FMOD_Studio_EventDescription_GetParameterDescriptionByIndex(ed, index, &parameter), NULL);
+	return parameter.name;
+}
+
 HL_PRIM int HL_NAME(studio_eventdescription_get_length)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
 	int length = 0;
 	CHKERR(FMOD_Studio_EventDescription_GetLength(ed, &length), 0);
@@ -218,6 +230,8 @@ HL_PRIM int HL_NAME(studio_eventdescription_get_loading_state)(FMOD_STUDIO_EVENT
 
 DEFINE_PRIM(_BOOL, studio_eventdescription_is_valid, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_I32, studio_eventdescription_get_path, _FSEVENTDESCRIPTION _BYTES _I32);
+DEFINE_PRIM(_I32, studio_eventdescription_get_parameter_description_count, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_BYTES, studio_eventdescription_get_parameter_description_name_by_index, _FSEVENTDESCRIPTION _I32);
 DEFINE_PRIM(_I32, studio_eventdescription_get_length, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_F32, studio_eventdescription_get_min_distance, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_F32, studio_eventdescription_get_max_distance, _FSEVENTDESCRIPTION);
