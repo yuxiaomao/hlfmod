@@ -43,7 +43,7 @@ enum abstract LoadBankFlags(Int) {
 	@:op(a | b) static function or(a:LoadBankFlags, b:LoadBankFlags) : LoadBankFlags;
 }
 
-enum abstract LoadingState(Int) {
+enum abstract LoadingState(Int) from Int {
 	var UNLOADING;
 	var UNLOADED;
 	var LOADING;
@@ -51,7 +51,7 @@ enum abstract LoadingState(Int) {
 	var ERROR;
 }
 
-enum abstract PlaybackState(Int) {
+enum abstract PlaybackState(Int) from Int {
 	var ERROR = -1;
 	var PLAYING = 0;
 	var SUSTAINING;
@@ -181,7 +181,7 @@ abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 	function createInstance() : EventInstance { return null; }
 	function loadSampleData() : Bool { return false; }
 	function unloadSampleData() : Bool { return false; }
-	function getSampleLoadingState() : LoadingState { return ERROR; }
+	function getSampleLoadingState() : Int { return 0; }
 }
 
 #if !disable_sound
@@ -198,7 +198,7 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	function stop(mode : StopMode) : Bool { return false; }
 	function getTimelinePosition() : Int { return 0; }
 	function setTimelinePosition(position : Int) : Bool { return false; }
-	function getPlaybackState() : PlaybackState { return ERROR; }
+	function getPlaybackState() : Int { return 0; }
 	function release() : Bool { return false; }
 	function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
@@ -237,8 +237,8 @@ abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
 	function unload() : Bool { return false; }
 	function loadSampleData() : Bool { return false; }
 	function unloadSampleData() : Bool { return false; }
-	function getLoadingState() : LoadingState { return ERROR; }
-	function getSampleLoadingState() : LoadingState { return ERROR; }
+	function getLoadingState() : Int { return 0; }
+	function getSampleLoadingState() : Int { return 0; }
 	function getEventCount() : Int { return 0; }
 	function getEventList(arr : hl.NativeArray<EventDescription>) : Int { return 0; }
 }

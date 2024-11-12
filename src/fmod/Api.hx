@@ -50,6 +50,10 @@ class Event {
 		inst.setTimelinePosition(position);
 	}
 
+	public function getPlaybackState() : Native.PlaybackState {
+		return inst.getPlaybackState();
+	}
+
 	public function getParameter(name : String) {
 		return inst.getParameterByName(@:privateAccess name.toUtf8());
 	}
@@ -128,6 +132,14 @@ class Api {
 			bank.unload();
 			loadedBanks.remove(name);
 		}
+	}
+
+	public static function getBankLoadingState(name : String) : Native.LoadingState {
+		if (!initialized) return ERROR;
+		var bank = loadedBanks.get(name);
+		if (bank == null)
+			return ERROR;
+		return bank.getLoadingState();
 	}
 
 	public static function getBankEventList(name : String) : Array<Event> {
