@@ -2,6 +2,8 @@
 
 Hashlink support for FMOD.
 
+This is an basic and standalone version of the lib used by Shiro Games.
+
 # Usage
 
 Windows:

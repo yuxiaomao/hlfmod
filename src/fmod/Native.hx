@@ -51,6 +51,11 @@ enum abstract LoadingState(Int) from Int {
 	var ERROR;
 }
 
+enum abstract LoadMemoryMode(Int) from Int {
+	var DEFAULT;
+	var POINT;
+}
+
 enum abstract PlaybackState(Int) from Int {
 	var ERROR = -1;
 	var PLAYING = 0;
@@ -89,6 +94,10 @@ enum abstract StopMode(Int) {
 	 */
 	@:from public static inline function fromVector(vector : h3d.Vector) {
 		return new FVector(vector.x, vector.z, -vector.y);
+	}
+
+	@:to public inline function toVector() : h3d.Vector {
+		return new h3d.Vector(this.x, -this.z, this.y);
 	}
 	#end
 }
@@ -160,6 +169,7 @@ abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
 	function setParameterByNameWithLabel(name : hl.Bytes, label : hl.Bytes, ignoreseekspeed : Bool) : Bool { return false; }
 	function setListenerAttributes(index : Int, attributes : F3DAttributes, attenuationposition : FVector) : Bool { return false; }
 	function loadBankFile(filename : hl.Bytes, flags : LoadBankFlags) : Bank { return null; }
+	function loadBankMemory(buffer : hl.Bytes, length : Int, mode : LoadMemoryMode, flags : LoadBankFlags) : Bank { return null; }
 	function flushCommands() : Bool { return false; }
 	function flushSampleLoading() : Bool { return false; }
 	function getCpuUsage() : Single { return 0; }
@@ -175,6 +185,8 @@ abstract EventDescription(hl.Abstract<"FMOD_STUDIO_EVENTDESCRIPTION">) {
 	function getParameterDescriptionNameByIndex(index : Int) : hl.Bytes { return null; }
 	function getLength() : Int { return 0; }
 	function getSoundSize() : Single { return 0; }
+	function getMinDistance() : Single { return 0; }
+	function getMaxDistance() : Single { return 0; }
 	function isSnapshot() : Bool { return false; }
 	function isOneshot() : Bool { return false; }
 	function isStream() : Bool { return false; }

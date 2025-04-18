@@ -95,6 +95,12 @@ HL_PRIM FMOD_STUDIO_BANK *HL_NAME(studio_system_load_bank_file)(FMOD_STUDIO_SYST
 	return bank;
 }
 
+HL_PRIM FMOD_STUDIO_BANK *HL_NAME(studio_system_load_bank_memory)(FMOD_STUDIO_SYSTEM *system, const char *buffer, int length, int mode, int flags) {
+	FMOD_STUDIO_BANK *bank;
+	CHKERR(FMOD_Studio_System_LoadBankMemory(system, buffer, length, mode, flags, &bank), NULL);
+	return bank;
+}
+
 HL_PRIM bool HL_NAME(studio_system_flush_commands)(FMOD_STUDIO_SYSTEM *system) {
 	CHKERR(FMOD_Studio_System_FlushCommands(system), false);
 	return true;
@@ -124,6 +130,7 @@ DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name, _FSSYSTEM _BYTES _F32 _B
 DEFINE_PRIM(_BOOL, studio_system_set_parameter_by_name_with_label, _FSSYSTEM _BYTES _BYTES _BOOL);
 DEFINE_PRIM(_BOOL, studio_system_set_listener_attributes, _FSSYSTEM _I32 _STRUCT _STRUCT);
 DEFINE_PRIM(_FSBANK, studio_system_load_bank_file, _FSSYSTEM _BYTES _I32);
+DEFINE_PRIM(_FSBANK, studio_system_load_bank_memory, _FSSYSTEM _BYTES _I32 _I32 _I32);
 DEFINE_PRIM(_BOOL, studio_system_flush_commands, _FSSYSTEM);
 DEFINE_PRIM(_BOOL, studio_system_flush_sample_loading, _FSSYSTEM);
 DEFINE_PRIM(_F32, studio_system_get_cpu_usage, _FSSYSTEM);
@@ -146,7 +153,7 @@ HL_PRIM int HL_NAME(studio_eventdescription_get_parameter_description_count)(FMO
 	return count;
 }
 
-HL_PRIM char *HL_NAME(studio_eventdescription_get_parameter_description_name_by_index)(FMOD_STUDIO_EVENTDESCRIPTION *ed, int index) {
+HL_PRIM const char *HL_NAME(studio_eventdescription_get_parameter_description_name_by_index)(FMOD_STUDIO_EVENTDESCRIPTION *ed, int index) {
 	FMOD_STUDIO_PARAMETER_DESCRIPTION parameter;
 	CHKERR(FMOD_Studio_EventDescription_GetParameterDescriptionByIndex(ed, index, &parameter), NULL);
 	return parameter.name;
@@ -177,31 +184,31 @@ HL_PRIM float HL_NAME(studio_eventdescription_get_sound_size)(FMOD_STUDIO_EVENTD
 }
 
 HL_PRIM bool HL_NAME(studio_eventdescription_is_snapshot)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
-	bool b = false;
+	FMOD_BOOL b = false;
 	CHKERR(FMOD_Studio_EventDescription_IsSnapshot(ed, &b), false);
 	return b;
 }
 
 HL_PRIM bool HL_NAME(studio_eventdescription_is_oneshot)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
-	bool b = false;
+	FMOD_BOOL b = false;
 	CHKERR(FMOD_Studio_EventDescription_IsOneshot(ed, &b), false);
 	return b;
 }
 
 HL_PRIM bool HL_NAME(studio_eventdescription_is_stream)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
-	bool b = false;
+	FMOD_BOOL b = false;
 	CHKERR(FMOD_Studio_EventDescription_IsStream(ed, &b), false);
 	return b;
 }
 
 HL_PRIM bool HL_NAME(studio_eventdescription_is3d)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
-	bool b = false;
+	FMOD_BOOL b = false;
 	CHKERR(FMOD_Studio_EventDescription_Is3D(ed, &b), false);
 	return b;
 }
 
 HL_PRIM bool HL_NAME(studio_eventdescription_is_doppler_enabled)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
-	bool b = false;
+	FMOD_BOOL b = false;
 	CHKERR(FMOD_Studio_EventDescription_IsDopplerEnabled(ed, &b), false);
 	return b;
 }
@@ -259,7 +266,7 @@ HL_PRIM FMOD_STUDIO_SYSTEM *HL_NAME(studio_eventinstance_get_system)(FMOD_STUDIO
 }
 
 HL_PRIM FMOD_3D_ATTRIBUTES *HL_NAME(studio_eventinstance_get_3d_attributes)(FMOD_STUDIO_EVENTINSTANCE *ei) {
-	FMOD_3D_ATTRIBUTES *attributes = {0};
+	FMOD_3D_ATTRIBUTES *attributes = (FMOD_3D_ATTRIBUTES *)hl_gc_alloc_noptr(sizeof(FMOD_3D_ATTRIBUTES));
 	CHKERR(FMOD_Studio_EventInstance_Get3DAttributes(ei, attributes), NULL);
 	return attributes;
 }
