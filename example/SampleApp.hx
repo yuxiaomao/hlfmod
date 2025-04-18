@@ -120,14 +120,14 @@ class SampleApp extends hxd.App {
 		return i;
 	}
 
-	function addText(text="") {
+	function addText( text = "" ) {
 		var tf = new h2d.Text(getFont(), fui);
 		tf.text = text;
 		return tf;
 	}
 
 	// 3D
-	function addCube(scale = 1.0, color = 0xFFB280) {
+	function addCube( scale = 1.0, color = 0xFFB280 ) {
 		var prim = new h3d.prim.Cube();
 		prim.translate( -0.5, -0.5, -0.5);
 		prim.unindex();

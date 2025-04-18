@@ -107,7 +107,7 @@ class Event {
 		return desc.getParameterDescriptionCount();
 	}
 
-	public inline function getParameterDescriptionNameByIndex( i : Int ) : String {
+	public inline function getParameterDescriptionNameByIndex(i : Int) : String {
 		return @:privateAccess String.fromUTF8(desc.getParameterDescriptionNameByIndex(i));
 	}
 
@@ -131,7 +131,7 @@ class Event {
 		added = false;
 	}
 
-	public function update( dt : Float ) {
+	public function update(dt : Float) {
 
 	}
 
@@ -282,11 +282,11 @@ class Api {
 		return new Event(ed);
 	}
 
-	static public function register( o : Event) {
+	static public function register(o : Event) {
 		objects.push(o);
 	}
 
-	static public function unregister( o : Event ) {
+	static public function unregister(o : Event) {
 		var i = objects.length;
 		while(i-- > 0) {
 			if(objects[i] == o) {
@@ -301,7 +301,7 @@ class Api {
 		}
 	}
 
-	public static function update(dt) {
+	public static function update(dt : Float) {
 		if (!initialized) return;
 
 		var i = 0;

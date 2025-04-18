@@ -20,7 +20,7 @@ class Main {
 		trace("start playing");
 		e.play();
 		while (true) {
-			fmod.Api.update();
+			fmod.Api.update(0);
 		}
 		e.release();
 		fmod.Api.release();

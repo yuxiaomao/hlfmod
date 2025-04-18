@@ -1,8 +1,9 @@
 # HLFMOD
 
 Hashlink support for FMOD.
+Supported FMOD Studio version: 2.03.
 
-This is an basic and standalone version of the lib used by Shiro Games.
+This is a basic and standalone version of the lib used by Shiro Games.
 
 # Usage
 
