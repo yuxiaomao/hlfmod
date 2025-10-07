@@ -1,4 +1,4 @@
-#define HL_NAME(n) fmod_##n
+#define HL_NAME(n) hlfmod_##n
 
 #include <hl.h>
 #include <fmod_studio.h>
@@ -15,11 +15,20 @@
 #define _FSBANK _ABSTRACT(FMOD_STUDIO_BANK)
 
 IMPORT void hl_sys_print( vbyte *msg );
+static int hlfmod_debug_flags = FMOD_DEBUG_LEVEL_ERROR;
 static void ReportFmodError( FMOD_RESULT err, int line ) {
-	static char tmp[256];
-	snprintf(tmp, 256, "FMOD Error (line %d): %s\n", line, FMOD_ErrorString(err));
-	hl_sys_print((vbyte*)hl_to_utf16(tmp));
+	if( (hlfmod_debug_flags & FMOD_DEBUG_LEVEL_ERROR) != 0 ) {
+		static char tmp[256];
+		snprintf(tmp, 256, "FMOD Error (line %d): %s\n", line, FMOD_ErrorString(err));
+		hl_sys_print((vbyte*)hl_to_utf16(tmp));
+	}
 }
+
+HL_PRIM void HL_NAME(set_debug_flags)( int flags ) {
+	hlfmod_debug_flags = flags;
+}
+
+DEFINE_PRIM(_VOID, set_debug_flags, _I32);
 
 // ----- FMOD_STUDIO_SYSTEM -----
 
@@ -229,7 +238,7 @@ HL_PRIM bool HL_NAME(studio_eventdescription_unload_sample_data)(FMOD_STUDIO_EVE
 	return true;
 }
 
-HL_PRIM int HL_NAME(studio_eventdescription_get_loading_state)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
+HL_PRIM int HL_NAME(studio_eventdescription_get_sample_loading_state)(FMOD_STUDIO_EVENTDESCRIPTION *ed) {
 	FMOD_STUDIO_LOADING_STATE state;
 	CHKERR(FMOD_Studio_EventDescription_GetSampleLoadingState(ed, &state), FMOD_STUDIO_LOADING_STATE_ERROR);
 	return state;
@@ -251,7 +260,7 @@ DEFINE_PRIM(_BOOL, studio_eventdescription_is_doppler_enabled, _FSEVENTDESCRIPTI
 DEFINE_PRIM(_FSEVENTINSTANCE, studio_eventdescription_create_instance, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_BOOL, studio_eventdescription_load_sample_data, _FSEVENTDESCRIPTION);
 DEFINE_PRIM(_BOOL, studio_eventdescription_unload_sample_data, _FSEVENTDESCRIPTION);
-DEFINE_PRIM(_I32, studio_eventdescription_get_loading_state, _FSEVENTDESCRIPTION);
+DEFINE_PRIM(_I32, studio_eventdescription_get_sample_loading_state, _FSEVENTDESCRIPTION);
 
 // ----- FMOD_STUDIO_EVENTINSTANCE -----
 

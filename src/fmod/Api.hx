@@ -141,6 +141,7 @@ class Event {
 
 	#if heaps
 	public function setTransform(mat: h3d.Matrix) {
+		if( attributes == null ) return;
 		var position = mat.getPosition();
 		var up = mat.up();
 		var front = mat.front();
@@ -151,6 +152,7 @@ class Event {
 	}
 
 	public function setPosition(position : h3d.Vector) {
+		if( attributes == null ) return;
 		attributes.position = position;
 		inst.set3DAttributes(attributes);
 	}
@@ -164,6 +166,12 @@ class Api {
 	public static var DEFAULT_INIT_FLAGS : Native.InitFlags = NORMAL;
 	public static var DEFAULT_CORE_INIT_FLAGS : Native.CoreInitFlags = NORMAL;
 	public static var LOAD_BANK_MEMORY : Bool = false;
+	public static var DEBUG_FLAGS(default, set) : Native.DebugFlags = ERROR;
+	static function set_DEBUG_FLAGS( flags : Native.DebugFlags ) {
+		Native.setDebugFlags(flags);
+		return DEBUG_FLAGS = flags;
+	}
+	public static var MAX_CHANNELS : Int = 32;
 
 	static var initialized = false;
 	static var system : Native.System;
@@ -175,9 +183,10 @@ class Api {
 	static var objects : Array<Event> = [];
 
 	public static function init(path : String, masterBank : String) {
+		if (initialized) return false;
 		system = Native.System.create();
 		// set additional config here
-		system.initialize(32, DEFAULT_INIT_FLAGS, DEFAULT_CORE_INIT_FLAGS, null);
+		system.initialize(MAX_CHANNELS, DEFAULT_INIT_FLAGS, DEFAULT_CORE_INIT_FLAGS, null);
 		basePath = path + "/";
 		loadedBanks = [];
 		initialized = true;
@@ -272,6 +281,18 @@ class Api {
 			return null;
 		cacheEventDescriptions.set(name, ed);
 		return ed;
+	}
+
+	public static function getGlobalParameter(name : String) {
+		return system.getParameterByName(@:privateAccess name.toUtf8());
+	}
+
+	public static function setGlobalParameter(name : String, value : Float) {
+		return system.setParameterByName(@:privateAccess name.toUtf8(), value, false);
+	}
+
+	public static function setGlobalParameterWithLabel(name : String, value : String) {
+		return system.setParameterByNameWithLabel(@:privateAccess name.toUtf8(), @:privateAccess value.toUtf8(), false);
 	}
 
 	public static function getEvent(name : String) : Event {

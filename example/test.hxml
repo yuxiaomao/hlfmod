@@ -10,7 +10,7 @@
 
 # --- HL/C ---
 # -hl bin/hlout/test.c
-# -D hlgen.makefile=ci
+# -D hlgen.makefile=vs2019
 # -D hlgen.makefilepath=bin
 
 # --- HEAPS ---

@@ -1,5 +1,10 @@
 package fmod;
 
+enum abstract DebugFlags(Int) from Int {
+	var NONE = 0x00000000;
+	var ERROR = 0x00000001;
+}
+
 enum abstract InitFlags(Int) {
 	var NORMAL = 0x00000000;
 	var LIVEUPDATE = 0x00000001;
@@ -266,4 +271,8 @@ abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
 
 @:keep
 class Native {
+	#if !disable_sound
+	@:hlNative("?hlfmod", "set_debug_flags")
+	#end
+	static function setDebugFlags(flags : DebugFlags) { }
 }
