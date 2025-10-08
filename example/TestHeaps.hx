@@ -68,7 +68,7 @@ class TestHeaps extends SampleApp {
 		addSlider("Music vol", function() { return fmod.Api.getBusVolume("bus:/Music"); }, function(v) { fmod.Api.setBusVolume("bus:/Music", v); });
 		addSlider("SFX vol", function() { return fmod.Api.getBusVolume("bus:/SFX"); }, function(v) { fmod.Api.setBusVolume("bus:/SFX", v); });
 		addCheck("Beeper", function() { return beeper; }, function(v) { beeper = v; });
-		if ( music != null ) {
+		if ( sfx != null ) {
 			var soundRange = 20;
 			addText("SFX Position");
 			addSlider("X", function() { return objPosition.x; }, function(v) { objPosition.x = v; obj.x = v; sfx.setPosition(objPosition);}, -soundRange, soundRange);

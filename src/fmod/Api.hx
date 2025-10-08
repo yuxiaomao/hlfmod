@@ -148,12 +148,14 @@ class Event {
 		attributes.position = position;
 		attributes.up = up;
 		attributes.forward = front;
+		if( inst == null ) return;
 		inst.set3DAttributes(attributes);
 	}
 
 	public function setPosition(position : h3d.Vector) {
 		if( attributes == null ) return;
 		attributes.position = position;
+		if( inst == null ) return;
 		inst.set3DAttributes(attributes);
 	}
 

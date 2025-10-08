@@ -274,5 +274,5 @@ class Native {
 	#if !disable_sound
 	@:hlNative("?hlfmod", "set_debug_flags")
 	#end
-	static function setDebugFlags(flags : DebugFlags) { }
+	static function setDebugFlags(flags : DebugFlags) : Void { }
 }
