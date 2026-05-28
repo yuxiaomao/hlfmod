@@ -1,8 +1,8 @@
 package fmod;
 
 enum abstract DebugFlags(Int) from Int {
-	var NONE = 0x00000000;
-	var ERROR = 0x00000001;
+	var DEFAULT = 0x00000000;
+	var LOG_ERROR = 0x00000001;
 }
 
 enum abstract InitFlags(Int) {

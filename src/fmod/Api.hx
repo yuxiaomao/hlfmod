@@ -205,7 +205,7 @@ class Api {
 	public static var DEFAULT_INIT_FLAGS : Native.InitFlags = NORMAL;
 	public static var DEFAULT_CORE_INIT_FLAGS : Native.CoreInitFlags = NORMAL;
 	public static var LOAD_BANK_MEMORY : Bool = false;
-	public static var DEBUG_FLAGS(default, set) : Native.DebugFlags = ERROR;
+	public static var DEBUG_FLAGS(default, set) : Native.DebugFlags = LOG_ERROR;
 	static function set_DEBUG_FLAGS( flags : Native.DebugFlags ) {
 		Native.setDebugFlags(flags);
 		return DEBUG_FLAGS = flags;
