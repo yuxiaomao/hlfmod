@@ -4,6 +4,7 @@ class TestHeaps extends SampleApp {
 	var time = 0.;
 	var music : fmod.Api.Event;
 	var sfx : fmod.Api.Event;
+	var metering : fmod.Api.MeteringDsp;
 
 	var camCtrl : h3d.scene.CameraController;
 
@@ -14,10 +15,12 @@ class TestHeaps extends SampleApp {
 	var slider : h2d.Slider;
 	var musicPosition : h2d.Text;
 
+	var meteringText : h2d.Text;
+
 	override function init() {
 		super.init();
 
-		camCtrl = new h3d.scene.CameraController(s3d);
+		camCtrl = new h3d.scene.CameraController.OrbitCameraController(s3d);
 		camCtrl.loadFromCamera();
 		camCtrl.set(15);
 		camCtrl.toTarget();
@@ -101,6 +104,21 @@ class TestHeaps extends SampleApp {
 			}
 			music = null;
 		} );
+
+		// Metering
+		function enableMetering(bus : String) {
+			if( metering != null )
+				metering.disable();
+			metering = fmod.Api.getMeteringDspFromBus(bus);
+			if( metering != null ) {
+				metering.enable();
+				trace("Metering enabled on " + bus);
+			}
+		}
+		addButton("Enable Metering Music", function() { enableMetering("bus:/Music"); });
+		addButton("Enable Metering SFX", function() { enableMetering("bus:/SFX"); });
+		meteringText = new h2d.Text(getFont(), fui);
+		meteringText.text = "Metering: 0";
 	}
 
 	override function update(dt:Float) {
@@ -119,6 +137,10 @@ class TestHeaps extends SampleApp {
 			var duration = music.getLength();
 			slider.value = position / duration;
 			musicPosition.text = hxd.Math.fmt(position) + "/" + hxd.Math.fmt(duration);
+		}
+		if( metering != null && meteringText != null ) {
+			var volume = metering.getOutputVolume();
+			meteringText.text = "Metering: " + hxd.Math.fmt(volume);
 		}
 		fmod.Api.update(dt);
 	}

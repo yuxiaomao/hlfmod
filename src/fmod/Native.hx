@@ -157,6 +157,30 @@ class ProgrammerSoundContext {
 }
 
 #if !disable_sound
+@:hlNative("?hlfmod", "system_")
+#end
+abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
+	// public function setSoftwareFormat(...)
+}
+
+#if !disable_sound
+@:hlNative("?hlfmod", "channelgroup_")
+#end
+abstract ChannelGroup(hl.Abstract<"FMOD_CHANNELGROUP">) {
+	function getNumDSPs() : Int { return 0; }
+	function getDSP(index : Int) : Dsp { return null; }
+}
+
+#if !disable_sound
+@:hlNative("?hlfmod", "dsp_")
+#end
+abstract Dsp(hl.Abstract<"FMOD_DSP">) {
+	function setMeteringEnabled(inputEnabled : Bool, outputEnabled : Bool) : Bool { return false; }
+	function getInputMeteringVolume() : Single { return 0; }
+	function getOutputMeteringVolume() : Single { return 0; }
+}
+
+#if !disable_sound
 @:hlNative("?hlfmod", "studio_system_")
 #end
 abstract System(hl.Abstract<"FMOD_STUDIO_SYSTEM">) {
@@ -218,6 +242,7 @@ abstract EventInstance(hl.Abstract<"FMOD_STUDIO_EVENTINSTANCE">) {
 	function getTimelinePosition() : Int { return 0; }
 	function setTimelinePosition(position : Int) : Bool { return false; }
 	function getPlaybackState() : Int { return 0; }
+	function getChannelGroup() : ChannelGroup { return null; }
 	function release() : Bool { return false; }
 	function getParameterByName(name : hl.Bytes) : Single { return 0; }
 	function setParameterByName(name : hl.Bytes, value : Single, ignoreseekspeed : Bool) : Bool { return false; }
@@ -237,6 +262,9 @@ abstract Bus(hl.Abstract<"FMOD_STUDIO_BUS">) {
 	function setPaused(paused : Bool) : Bool { return false; }
 	function getMute() : Bool { return false; }
 	function setMute(mute : Bool) : Bool { return false; }
+	function lockChannelGroup() : Bool { return false; }
+	function unlockChannelGroup() : Bool { return false; }
+	function getChannelGroup() : ChannelGroup { return null; }
 }
 
 #if !disable_sound
@@ -260,13 +288,6 @@ abstract Bank(hl.Abstract<"FMOD_STUDIO_BANK">) {
 	function getSampleLoadingState() : Int { return 0; }
 	function getEventCount() : Int { return 0; }
 	function getEventList(arr : hl.NativeArray<EventDescription>) : Int { return 0; }
-}
-
-#if !disable_sound
-@:hlNative("?hlfmod", "core_system_")
-#end
-abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
-	// public function setSoftwareFormat(...)
 }
 
 @:keep

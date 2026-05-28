@@ -6,8 +6,10 @@
 
 #define CHKERR(cmd, __default) { FMOD_RESULT __ret = (cmd); if( __ret != FMOD_OK ) { ReportFmodError(__ret,__LINE__); return __default; } }
 
-#define _FSSYSTEM _ABSTRACT(FMOD_STUDIO_SYSTEM)
 #define _FSYSTEM _ABSTRACT(FMOD_SYSTEM)
+#define _FCHANNELGROUP _ABSTRACT(FMOD_CHANNELGROUP)
+#define _FDSP _ABSTRACT(FMOD_DSP)
+#define _FSSYSTEM _ABSTRACT(FMOD_STUDIO_SYSTEM)
 #define _FSEVENTDESCRIPTION _ABSTRACT(FMOD_STUDIO_EVENTDESCRIPTION)
 #define _FSEVENTINSTANCE _ABSTRACT(FMOD_STUDIO_EVENTINSTANCE)
 #define _FSBUS _ABSTRACT(FMOD_STUDIO_BUS)
@@ -29,6 +31,57 @@ HL_PRIM void HL_NAME(set_debug_flags)( int flags ) {
 }
 
 DEFINE_PRIM(_VOID, set_debug_flags, _I32);
+
+// ----- FMOD_CHANNELGROUP -----
+
+HL_PRIM int HL_NAME(channelgroup_get_num_dsps)(FMOD_CHANNELGROUP *channelgroup) {
+	int count = 0;
+	CHKERR(FMOD_ChannelGroup_GetNumDSPs(channelgroup, &count), 0);
+	return count;
+}
+
+HL_PRIM FMOD_DSP *HL_NAME(channelgroup_get_dsp)(FMOD_CHANNELGROUP *channelgroup, int index) {
+	FMOD_DSP *dsp;
+	CHKERR(FMOD_ChannelGroup_GetDSP(channelgroup, index, &dsp), NULL);
+	return dsp;
+}
+
+DEFINE_PRIM(_I32, channelgroup_get_num_dsps, _FCHANNELGROUP);
+DEFINE_PRIM(_FDSP, channelgroup_get_dsp, _FCHANNELGROUP _I32);
+
+// ----- FMOD_DSP -----
+
+static float get_metering_volume(FMOD_DSP *dsp, bool input) {
+	FMOD_DSP_METERING_INFO info;
+	if( input ) {
+		CHKERR(FMOD_DSP_GetMeteringInfo(dsp, &info, NULL), 0.0f);
+	} else {
+		CHKERR(FMOD_DSP_GetMeteringInfo(dsp, NULL, &info), 0.0f);
+	}
+	if( info.numchannels <= 0 )
+		return 0.0f;
+	float total = 0.0f;
+	for( int i = 0; i < info.numchannels; i++ )
+		total += info.rmslevel[i];
+	return total / info.numchannels;
+}
+
+HL_PRIM bool HL_NAME(dsp_set_metering_enabled)(FMOD_DSP *dsp, bool inputEnabled, bool outputEnabled) {
+	CHKERR(FMOD_DSP_SetMeteringEnabled(dsp, inputEnabled, outputEnabled), false);
+	return true;
+}
+
+HL_PRIM float HL_NAME(dsp_get_input_metering_volume)(FMOD_DSP *dsp) {
+	return get_metering_volume(dsp, true);
+}
+
+HL_PRIM float HL_NAME(dsp_get_output_metering_volume)(FMOD_DSP *dsp) {
+	return get_metering_volume(dsp, false);
+}
+
+DEFINE_PRIM(_BOOL, dsp_set_metering_enabled, _FDSP _BOOL _BOOL);
+DEFINE_PRIM(_F32, dsp_get_input_metering_volume, _FDSP);
+DEFINE_PRIM(_F32, dsp_get_output_metering_volume, _FDSP);
 
 // ----- FMOD_STUDIO_SYSTEM -----
 
@@ -312,6 +365,12 @@ HL_PRIM int HL_NAME(studio_eventinstance_get_playback_state)(FMOD_STUDIO_EVENTIN
 	return state;
 }
 
+HL_PRIM FMOD_CHANNELGROUP *HL_NAME(studio_eventinstance_get_channel_group)(FMOD_STUDIO_EVENTINSTANCE *ei) {
+	FMOD_CHANNELGROUP *group;
+	CHKERR(FMOD_Studio_EventInstance_GetChannelGroup(ei, &group), NULL);
+	return group;
+}
+
 HL_PRIM bool HL_NAME(studio_eventinstance_release)(FMOD_STUDIO_EVENTINSTANCE *ei) {
 	CHKERR(FMOD_Studio_EventInstance_Release(ei), false);
 	return true;
@@ -397,6 +456,7 @@ DEFINE_PRIM(_BOOL, studio_eventinstance_stop, _FSEVENTINSTANCE _I32);
 DEFINE_PRIM(_I32, studio_eventinstance_get_timeline_position, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_timeline_position, _FSEVENTINSTANCE _I32);
 DEFINE_PRIM(_I32, studio_eventinstance_get_playback_state, _FSEVENTINSTANCE);
+DEFINE_PRIM(_FCHANNELGROUP, studio_eventinstance_get_channel_group, _FSEVENTINSTANCE);
 DEFINE_PRIM(_BOOL, studio_eventinstance_release, _FSEVENTINSTANCE);
 DEFINE_PRIM(_F32, studio_eventinstance_get_parameter_by_name, _FSEVENTINSTANCE _BYTES);
 DEFINE_PRIM(_BOOL, studio_eventinstance_set_parameter_by_name, _FSEVENTINSTANCE _BYTES _F32 _BOOL);
@@ -443,6 +503,22 @@ HL_PRIM bool HL_NAME(studio_bus_set_mute)(FMOD_STUDIO_BUS *bus, bool mute) {
 	return true;
 }
 
+HL_PRIM bool HL_NAME(studio_bus_lock_channel_group)(FMOD_STUDIO_BUS *bus) {
+	CHKERR(FMOD_Studio_Bus_LockChannelGroup(bus), false);
+	return true;
+}
+
+HL_PRIM bool HL_NAME(studio_bus_unlock_channel_group)(FMOD_STUDIO_BUS *bus) {
+	CHKERR(FMOD_Studio_Bus_UnlockChannelGroup(bus), false);
+	return true;
+}
+
+HL_PRIM FMOD_CHANNELGROUP *HL_NAME(studio_bus_get_channel_group)(FMOD_STUDIO_BUS *bus) {
+	FMOD_CHANNELGROUP *group;
+	CHKERR(FMOD_Studio_Bus_GetChannelGroup(bus, &group), NULL);
+	return group;
+}
+
 DEFINE_PRIM(_BOOL, studio_bus_is_valid, _FSBUS);
 DEFINE_PRIM(_F32, studio_bus_get_volume, _FSBUS);
 DEFINE_PRIM(_BOOL, studio_bus_set_volume, _FSBUS _F32);
@@ -450,6 +526,9 @@ DEFINE_PRIM(_BOOL, studio_bus_get_paused, _FSBUS);
 DEFINE_PRIM(_BOOL, studio_bus_set_paused, _FSBUS _BOOL);
 DEFINE_PRIM(_BOOL, studio_bus_get_mute, _FSBUS);
 DEFINE_PRIM(_BOOL, studio_bus_set_mute, _FSBUS _BOOL);
+DEFINE_PRIM(_BOOL, studio_bus_lock_channel_group, _FSBUS);
+DEFINE_PRIM(_BOOL, studio_bus_unlock_channel_group, _FSBUS);
+DEFINE_PRIM(_FCHANNELGROUP, studio_bus_get_channel_group, _FSBUS);
 
 // ----- FMOD_STUDIO_VCA -----
 

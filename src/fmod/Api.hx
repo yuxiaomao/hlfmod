@@ -162,6 +162,43 @@ class Event {
 	#end
 }
 
+@:access(fmod.Bus)
+@:access(fmod.ChannelGroup)
+@:access(fmod.Dsp)
+class MeteringDsp {
+	var bus : Native.Bus;
+	var dsp : Native.Dsp;
+
+	public function new(bus : Native.Bus) {
+		this.bus = bus;
+	}
+
+	public function enable() {
+		bus.lockChannelGroup();
+		@:privateAccess Api.system.flushCommands();
+		var group = bus.getChannelGroup();
+		dsp = group.getDSP(0);
+		dsp.setMeteringEnabled(true, true);
+	}
+
+	public function disable() {
+		if( dsp != null ) {
+			dsp.setMeteringEnabled(false, false);
+			dsp = null;
+		}
+		if( bus != null )
+			bus.unlockChannelGroup();
+	}
+
+	public function getInputVolume() : Float {
+		return dsp == null ? 0.0 : dsp.getInputMeteringVolume();
+	}
+
+	public function getOutputVolume() : Float {
+		return dsp == null ? 0.0 : dsp.getOutputMeteringVolume();
+	}
+}
+
 @:access(fmod)
 class Api {
 
@@ -261,6 +298,10 @@ class Api {
 		getBus(name).setVolume(volume);
 	}
 
+	public static function getMeteringDspFromBus(name : String) {
+		return new MeteringDsp(getBus(name));
+	}
+
 	static inline function getVCA(name : String) {
 		return system.getVCA(@:privateAccess name.toUtf8());
 	}
@@ -305,11 +346,11 @@ class Api {
 		return new Event(ed);
 	}
 
-	static public function register(o : Event) {
+	public static function register(o : Event) {
 		objects.push(o);
 	}
 
-	static public function unregister(o : Event) {
+	public static function unregister(o : Event) {
 		var i = objects.length;
 		while(i-- > 0) {
 			if(objects[i] == o) {
