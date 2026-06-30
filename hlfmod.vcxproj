@@ -23,14 +23,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Log|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -49,13 +49,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.hdll</TargetExt>
-    <LibraryPath>api/studio/lib/x64;api/core/lib/x64;$(HASHLINK_SRC)/$(IntDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>api/studio/lib/x64;api/core/lib/x64;$(HASHLINK_SRC)/$(Platform)/$(Configuration);$(LibraryPath)</LibraryPath>
     <IncludePath>api/studio/inc;api/core/inc;$(HASHLINK_SRC)/src</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Log|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.hdll</TargetExt>
-    <LibraryPath>api/studio/lib/x64;api/core/lib/x64;$(HASHLINK_SRC)/$(IntDir);$(LibraryPath)</LibraryPath>
+    <LibraryPath>api/studio/lib/x64;api/core/lib/x64;$(HASHLINK_SRC)/$(Platform)/$(Configuration);$(LibraryPath)</LibraryPath>
     <IncludePath>api/studio/inc;api/core/inc;$(HASHLINK_SRC)/src</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
