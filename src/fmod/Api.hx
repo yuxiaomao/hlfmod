@@ -210,7 +210,8 @@ class Api {
 		Native.setDebugFlags(flags);
 		return DEBUG_FLAGS = flags;
 	}
-	public static var MAX_CHANNELS : Int = 32;
+	public static var MAX_CHANNELS : Int = 128; // virtual voices
+	public static var SOFTWARE_CHANNELS : Int = 64; // real mixed voices
 
 	static var initialized = false;
 	static var system : Native.System;
@@ -225,6 +226,8 @@ class Api {
 		if (initialized) return false;
 		system = Native.System.create();
 		// set additional config here
+		var core = system.getCoreSystem();
+		core.setSoftwareChannels(SOFTWARE_CHANNELS);
 		system.initialize(MAX_CHANNELS, DEFAULT_INIT_FLAGS, DEFAULT_CORE_INIT_FLAGS, null);
 		basePath = path + "/";
 		loadedBanks = [];

@@ -32,6 +32,39 @@ HL_PRIM void HL_NAME(set_debug_flags)( int flags ) {
 
 DEFINE_PRIM(_VOID, set_debug_flags, _I32);
 
+// ----- FMOD_SYSTEM -----
+
+HL_PRIM bool HL_NAME(system_set_software_channels)(FMOD_SYSTEM *system, int numsoftwarechannels) {
+	CHKERR(FMOD_System_SetSoftwareChannels(system, numsoftwarechannels), false);
+	return true;
+}
+
+HL_PRIM int HL_NAME(system_get_software_channels)(FMOD_SYSTEM *system) {
+	int numsoftwarechannels;
+	CHKERR(FMOD_System_GetSoftwareChannels(system, &numsoftwarechannels), 0);
+	return numsoftwarechannels;
+}
+
+static int get_channels_playing(FMOD_SYSTEM *system, bool real) {
+	int channels = 0;
+	int realchannels = 0;
+	CHKERR(FMOD_System_GetChannelsPlaying(system, &channels, &realchannels), 0);
+	return real ? realchannels : channels;
+}
+
+HL_PRIM int HL_NAME(system_get_channels_playing)(FMOD_SYSTEM *system) {
+	return get_channels_playing(system, false);
+}
+
+HL_PRIM int HL_NAME(system_get_real_channels_playing)(FMOD_SYSTEM *system) {
+	return get_channels_playing(system, true);
+}
+
+DEFINE_PRIM(_BOOL, system_set_software_channels, _FSYSTEM _I32);
+DEFINE_PRIM(_I32, system_get_software_channels, _FSYSTEM);
+DEFINE_PRIM(_I32, system_get_channels_playing, _FSYSTEM);
+DEFINE_PRIM(_I32, system_get_real_channels_playing, _FSYSTEM);
+
 // ----- FMOD_CHANNELGROUP -----
 
 HL_PRIM int HL_NAME(channelgroup_get_num_dsps)(FMOD_CHANNELGROUP *channelgroup) {

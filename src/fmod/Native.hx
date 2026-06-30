@@ -160,7 +160,10 @@ class ProgrammerSoundContext {
 @:hlNative("?hlfmod", "system_")
 #end
 abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
-	// public function setSoftwareFormat(...)
+	function setSoftwareChannels(numsoftwarechannels : Int) : Bool { return false; }
+	function getSoftwareChannels() : Int { return 0; }
+	function getChannelsPlaying() : Int { return 0; }
+	function getRealChannelsPlaying() : Int { return 0; }
 }
 
 #if !disable_sound
