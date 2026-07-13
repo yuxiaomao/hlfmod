@@ -48,6 +48,14 @@ enum abstract LoadBankFlags(Int) {
 	@:op(a | b) static function or(a:LoadBankFlags, b:LoadBankFlags) : LoadBankFlags;
 }
 
+enum abstract DSPResampler(Int) {
+	var DEFAULT;
+	var NOINTERP;
+	var LINEAR;
+	var CUBIC;
+	var SPLINE;
+}
+
 enum abstract LoadingState(Int) from Int {
 	var UNLOADING;
 	var UNLOADED;
@@ -144,6 +152,36 @@ enum abstract StopMode(Int) {
 	}
 }
 
+/**
+	Values of 0 or null use FMOD's default behavior.
+**/
+@:struct class FCoreAdvancedSettings {
+	var cbSize : Int;
+	public var maxMPEGCodecs : Int;
+	public var maxADPCMCodecs : Int;
+	public var maxXMACodecs : Int;
+	public var maxVorbisCodecs : Int;
+	public var maxAT9Codecs : Int;
+	public var maxFADPCMCodecs : Int;
+	public var maxOpusCodecs : Int;
+	public var ASIONumChannels : Int;
+	public var ASIOChannelList : hl.CArray<hl.Bytes>;
+	public var ASIOSpeakerList : hl.CArray<Int>;
+	public var vol0virtualvol : Single;
+	public var defaultDecodeBufferSize : Int;
+	public var profilePort : hl.UI16;
+	public var geometryMaxFadeTime : Int;
+	public var distanceFilterCenterFreq : Single;
+	public var reverb3Dinstance : Int;
+	public var DSPBufferPoolSize : Int;
+	public var resamplerMethod : DSPResampler;
+	public var randomSeed : Int;
+	public var maxConvolutionThreads : Int;
+	public var maxSpatialObjects : Int;
+
+	public function new() {}
+}
+
 class ProgrammerSoundContext {
 	public var studioSystem : System;
 	public var coreSystem : CoreSystem;
@@ -162,6 +200,8 @@ class ProgrammerSoundContext {
 abstract CoreSystem(hl.Abstract<"FMOD_SYSTEM">) {
 	function setSoftwareChannels(numsoftwarechannels : Int) : Bool { return false; }
 	function getSoftwareChannels() : Int { return 0; }
+	function setAdvancedSettings(settings : FCoreAdvancedSettings) : Bool { return false; }
+	function getAdvancedSettings(settings : FCoreAdvancedSettings) : Bool { return false; }
 	function getChannelsPlaying() : Int { return 0; }
 	function getRealChannelsPlaying() : Int { return 0; }
 }

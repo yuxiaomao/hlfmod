@@ -2,7 +2,7 @@ class Main {
 	static function main() {
 		// Init with basic config
 		// fmod.Api.LOAD_BANK_MEMORY = true;
-		fmod.Api.DEFAULT_INIT_FLAGS = fmod.Native.InitFlags.LIVEUPDATE;
+		fmod.Api.INIT_FLAGS = fmod.Native.InitFlags.LIVEUPDATE;
 		fmod.Api.init("res/audio", "Master.bank");
 		fmod.Api.loadBank("Master.strings.bank"); // Do not forgot load strings bank
 		fmod.Api.loadBank("Music.bank");

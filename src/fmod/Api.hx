@@ -202,16 +202,17 @@ class MeteringDsp {
 @:access(fmod)
 class Api {
 
-	public static var DEFAULT_INIT_FLAGS : Native.InitFlags = NORMAL;
-	public static var DEFAULT_CORE_INIT_FLAGS : Native.CoreInitFlags = NORMAL;
+	public static var INIT_FLAGS : Native.InitFlags = NORMAL;
+	public static var CORE_INIT_FLAGS : Native.CoreInitFlags = NORMAL;
+	public static var MAX_CHANNELS : Int = 128; // virtual voices
+	public static var SOFTWARE_CHANNELS : Int = 64; // real mixed voices
+	public static var CORE_ADVANCED_SETTINGS : Native.FCoreAdvancedSettings = new Native.FCoreAdvancedSettings();
 	public static var LOAD_BANK_MEMORY : Bool = false;
 	public static var DEBUG_FLAGS(default, set) : Native.DebugFlags = LOG_ERROR;
 	static function set_DEBUG_FLAGS( flags : Native.DebugFlags ) {
 		Native.setDebugFlags(flags);
 		return DEBUG_FLAGS = flags;
 	}
-	public static var MAX_CHANNELS : Int = 128; // virtual voices
-	public static var SOFTWARE_CHANNELS : Int = 64; // real mixed voices
 
 	static var initialized = false;
 	static var system : Native.System;
@@ -228,7 +229,8 @@ class Api {
 		// set additional config here
 		var core = system.getCoreSystem();
 		core.setSoftwareChannels(SOFTWARE_CHANNELS);
-		system.initialize(MAX_CHANNELS, DEFAULT_INIT_FLAGS, DEFAULT_CORE_INIT_FLAGS, null);
+		core.setAdvancedSettings(CORE_ADVANCED_SETTINGS);
+		system.initialize(MAX_CHANNELS, INIT_FLAGS, CORE_INIT_FLAGS, null);
 		basePath = path + "/";
 		loadedBanks = [];
 		initialized = true;

@@ -45,6 +45,19 @@ HL_PRIM int HL_NAME(system_get_software_channels)(FMOD_SYSTEM *system) {
 	return numsoftwarechannels;
 }
 
+HL_PRIM bool HL_NAME(system_set_advanced_settings)(FMOD_SYSTEM *system, FMOD_ADVANCEDSETTINGS *settings) {
+	settings->cbSize = sizeof(FMOD_ADVANCEDSETTINGS);
+	CHKERR(FMOD_System_SetAdvancedSettings(system, settings), false);
+	return true;
+}
+
+HL_PRIM bool HL_NAME(system_get_advanced_settings)(FMOD_SYSTEM* system, FMOD_ADVANCEDSETTINGS* settings) {
+	memset(settings, 0, sizeof(FMOD_ADVANCEDSETTINGS));
+	settings->cbSize = sizeof(FMOD_ADVANCEDSETTINGS);
+	CHKERR(FMOD_System_GetAdvancedSettings(system, settings), false);
+	return true;
+}
+
 static int get_channels_playing(FMOD_SYSTEM *system, bool real) {
 	int channels = 0;
 	int realchannels = 0;
@@ -62,6 +75,8 @@ HL_PRIM int HL_NAME(system_get_real_channels_playing)(FMOD_SYSTEM *system) {
 
 DEFINE_PRIM(_BOOL, system_set_software_channels, _FSYSTEM _I32);
 DEFINE_PRIM(_I32, system_get_software_channels, _FSYSTEM);
+DEFINE_PRIM(_BOOL, system_set_advanced_settings, _FSYSTEM _STRUCT);
+DEFINE_PRIM(_BOOL, system_get_advanced_settings, _FSYSTEM _STRUCT);
 DEFINE_PRIM(_I32, system_get_channels_playing, _FSYSTEM);
 DEFINE_PRIM(_I32, system_get_real_channels_playing, _FSYSTEM);
 
